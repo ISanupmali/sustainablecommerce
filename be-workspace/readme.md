@@ -6,7 +6,7 @@ These are the essentials to run the below node application locally.
 
 | SDK's / Libraries / Packages | Download link / Documentation Link |
 | ------ | ------ |
-| Node and Npm  | [https://nodejs.org/en/] - Check if node is installed using  ```node -v``` in command prompt. If not, install it using the link provided here. Node.js version 10 and 12 LTS are supported with Salesforce Commerce SDK. |
+| Node and Npm  | [https://nodejs.org/en/] - Check if node is installed using  ```node -v``` in command prompt. If not, install it using the link provided here. Node.js version 10 and 12 LTS are supported with Salesforce Commerce SDK as per the official documentation. However, code shall work fine with Node.js version 18 and above as well. |
 | Nodemon | [https://www.npmjs.com/package/nodemon] - Useful tool that autorestarts the application when file changes are detecte in the node project. Install using ```npm install nodemon``` |
 | Express Js | [https://expressjs.com/] - This does not need to be installed explicitly. This will get installed automatically when you run npm install which will basically install all the project dependencies. However, do not run it right now. Steps for installing dependencies are listed below. |
 | Salesforce Commerce SDK | [https://www.npmjs.com/package/commerce-sdk] - This does not need to be installed explicitly. Allows easy interaction with the Salesforce B2C Commerce platform APIs on the Node.js runtime. |
