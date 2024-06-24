@@ -78,6 +78,17 @@ class Categorypage extends React.Component {
     }
   }
 
+  async componentDidUpdate(prevProps) {
+    if (this.props.match.params.id !== prevProps.match.params.id) {
+      this.setState({ isLoading: true });
+      const categoryInfo = await this.fetchCategoryData(this.state.headers);
+      if (categoryInfo) {
+        const products = categoryInfo;
+        this.setState({ products, isLoading: false });
+      }
+    }
+  }
+
   render() {
     return (
       <div>
