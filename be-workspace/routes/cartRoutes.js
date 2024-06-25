@@ -10,16 +10,15 @@ const allowOriginUrl = '*';
 // import Packages from "commerce-sdk" | Configurations to use while creating API Clients
 const { Checkout, Product } = require("commerce-sdk");
 // Create a configuration to use when creating API clients. Also fetch the authorization token in the config obect.
-//var config = require('./configs/getauthorizationtoken.js');
-var config1 = require('./configs/config');
+var config = require('./configs/config');
 
 // Get Basket Details using BasketID
 function getBasketDetails (basketID, headerToken) {
     return new Promise(function(resolve, reject){
         try {
-            config1.headers["authorization"] = headerToken;
+            config.headers["authorization"] = headerToken;
             // Create a new ShopperBaskets API client
-            const shopperBasketsClient = new Checkout.ShopperBaskets(config1);
+            const shopperBasketsClient = new Checkout.ShopperBaskets(config);
             const basketResult = shopperBasketsClient.getBasket({
                 parameters: {
                     basketId: basketID                }
@@ -35,9 +34,9 @@ function getBasketDetails (basketID, headerToken) {
 function createBasketObject(productID, quantity, headerToken) {
     return new Promise(function(resolve, reject){
         try {    
-            config1.headers["authorization"] = headerToken;
+            config.headers["authorization"] = headerToken;
             // Create a new ShopperBaskets API client
-            const shopperBasketsClient = new Checkout.ShopperBaskets(config1);
+            const shopperBasketsClient = new Checkout.ShopperBaskets(config);
            // shopperBasketsClient.
             const basketResult = shopperBasketsClient.createBasket({
                 body: { 
@@ -62,9 +61,9 @@ function createBasketObject(productID, quantity, headerToken) {
 function addItemToBasket(basketId, productId, quantity, headerToken) {
     return new Promise(function(resolve, reject){
         try {    
-            config1.headers["authorization"] = headerToken;
+            config.headers["authorization"] = headerToken;
             // Create a new ShopperBaskets API client
-            const shopperBasketsClient = new Checkout.ShopperBaskets(config1);
+            const shopperBasketsClient = new Checkout.ShopperBaskets(config);
             const basketResult = shopperBasketsClient.addItemToBasket({
             parameters: {
                 basketId: basketId
@@ -87,7 +86,7 @@ function addItemToBasket(basketId, productId, quantity, headerToken) {
 function updateItemToBasket(basketId, itemId, quantity, headerToken){
     return new Promise(function(resolve, reject){
         try {
-            config1.headers["authorization"] = headerToken;
+            config.headers["authorization"] = headerToken;
             // Create a new ShopperBaskets API client
             const shopperBasketsClient = new Checkout.ShopperBaskets(config);
             const basketResult = shopperBasketsClient.updateItemInBasket({

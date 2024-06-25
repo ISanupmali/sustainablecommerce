@@ -23,53 +23,83 @@ class Paymentpage extends React.Component {
       basket: [],
       submitted: false,
       isLoaded: false,
+      errors: {},
     };
   }
 
   handleCardType = (event) => {
     this.setState({
       cardType: event.target.value,
-    });
-  };
-  handleExpirationMonth = (event) => {
-    this.setState({
-      expirationMonth: event.target.value,
-    });
-  };
-  handleExpirationYear = (event) => {
-    this.setState({
-      expirationYear: event.target.value,
-    });
-  };
-  handleCardHolder = (event) => {
-    this.setState({
-      cardHolder: event.target.value,
-    });
-  };
-  handleCardNumber = (event) => {
-    this.setState({
-      cardNumber: event.target.value,
-    });
-  };
-  handleTotalAmount = (event) => {
-    this.setState({
-      totalAmount: event.target.value,
+      errors: { ...this.state.errors, cardType: "" },
     });
   };
 
+  handleExpirationMonth = (event) => {
+    this.setState({
+      expirationMonth: event.target.value,
+      errors: { ...this.state.errors, expirationMonth: "" },
+    });
+  };
+
+  handleExpirationYear = (event) => {
+    this.setState({
+      expirationYear: event.target.value,
+      errors: { ...this.state.errors, expirationYear: "" },
+    });
+  };
+
+  handleCardHolder = (event) => {
+    this.setState({
+      cardHolder: event.target.value,
+      errors: { ...this.state.errors, cardHolder: "" },
+    });
+  };
+
+  handleCardNumber = (event) => {
+    this.setState({
+      cardNumber: event.target.value,
+      errors: { ...this.state.errors, cardNumber: "" },
+    });
+  };
+
+  handleTotalAmount = (event) => {
+    this.setState({
+      totalAmount: event.target.value,
+      errors: { ...this.state.errors, totalAmount: "" },
+    });
+  };
+
+  validateFields = () => {
+    const errors = {};
+    if (!this.state.cardType) errors.cardType = "Card type is required";
+    if (!this.state.cardHolder) errors.cardHolder = "Card holder name is required";
+    if (!this.state.cardNumber) errors.cardNumber = "Card number is required";
+    if (!this.state.expirationMonth) errors.expirationMonth = "Expiration month is required";
+    if (!this.state.expirationYear) errors.expirationYear = "Expiration year is required";
+    return errors;
+  };
+
   handleSubmission = (event) => {
+    alert(1);
+    event.preventDefault();
+    const errors = this.validateFields();
+    console.log(errors);
+    if (Object.keys(errors).length > 0) {
+      this.setState({ errors });
+      return;
+    }
+
+    alert(2);
+
     var mask = MaskedCardNumber(this.state.cardNumber);
     const urlParams = new URLSearchParams(this.props.location.search);
     const orderTotal = urlParams.get("orderTotal");
     this.setState({ submitted: true });
     const basketObj = this.state.basket;
     console.log(orderTotal);
-    //  const orderTotal = basketObj.orderTotal != null ? basketObj.orderTotal : '';
+
     axios
-      .get(
-        `${process.env.REACT_APP_API_URL}/addpaymentinstrument/` +
-          this.state.basketId,
-        {
+      .get(`${process.env.REACT_APP_API_URL}/addpaymentinstrument/` + this.state.basketId, {
           params: {
             cardType: this.state.cardType,
             expirationMonth: this.state.expirationMonth,
@@ -92,11 +122,9 @@ class Paymentpage extends React.Component {
 
   async fetchCartInfo(headers) {
     try {
-      const res = await axios.get(
-        `${process.env.REACT_APP_API_URL}/baskets/` +
-          this.props.match.params.id,
-        { headers: headers }
-      );
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/baskets/` + this.props.match.params.id, {
+        headers: headers 
+      });
       return res.data;
     } catch (error) {
       console.error("Error fetching cart info", error);
@@ -155,7 +183,7 @@ class Paymentpage extends React.Component {
             <meta name="theme-color" content="#ccc" />
           </Helmet>
           <Navbar></Navbar>
-          <div className="contashipping-heading container mb-5">
+          <div className="contashipping-heading paymentpage container mb-5">
             <div className="row mt-3 mb-5 p-3 my-3 alert alert-success">
               <div className="col col-lg-9 col-sm-8">
                 <h5>
@@ -179,12 +207,12 @@ class Paymentpage extends React.Component {
                 <form onSubmit={this.handleSubmission}>
                   <fieldset>
                     <div className="form-group">
-                      <label className="col-sm-3 control-label" for="card-type">
+                      <label className="col-sm-3 control-label" htmlFor="card-type">
                         Card Type
                       </label>
                       <div className="col-sm-9">
                         <select
-                          className="form-control col-sm-12"
+                          className={`form-control col-sm-12 ${this.state.errors.cardType ? 'is-invalid' : ''}`}
                           name="card-type"
                           id="card-type"
                           onChange={this.handleCardType}
@@ -195,50 +223,59 @@ class Paymentpage extends React.Component {
                           <option value="Mastercard">Mastercard</option>
                           <option value="Visa">Visa</option>
                         </select>
+                        {this.state.errors.cardType && (
+                          <div className="invalid-feedback">{this.state.errors.cardType}</div>
+                        )}
                       </div>
                     </div>
                     <div className="form-group">
                       <label
                         className="col-sm-3 control-label"
-                        for="card-holder-name"
+                        htmlFor="card-holder-name"
                       >
                         Name on Card
                       </label>
                       <div className="col-sm-9">
                         <input
                           type="text"
-                          className="form-control"
+                          className={`form-control ${this.state.errors.cardHolder ? 'is-invalid' : ''}`}
                           name="card-holder-name"
                           id="card-holder-name"
                           placeholder="Card Holder's Name"
                           value={this.state.cardHolder}
                           onChange={this.handleCardHolder}
                         />
+                        {this.state.errors.cardHolder && (
+                          <div className="invalid-feedback">{this.state.errors.cardHolder}</div>
+                        )}
                       </div>
                     </div>
                     <div className="form-group">
                       <label
                         className="col-sm-3 control-label"
-                        for="card-number"
+                        htmlFor="card-number"
                       >
                         Card Number
                       </label>
                       <div className="col-sm-9">
                         <input
                           type="text"
-                          className="form-control"
+                          className={`form-control ${this.state.errors.cardNumber ? 'is-invalid' : ''}`}
                           name="card-number"
                           id="card-number"
                           placeholder="Debit/Credit Card Number"
                           value={this.state.cardNumber}
                           onChange={this.handleCardNumber}
                         />
+                        {this.state.errors.cardNumber && (
+                          <div className="invalid-feedback">{this.state.errors.cardNumber}</div>
+                        )}
                       </div>
                     </div>
                     <div className="form-group">
                       <label
                         className="col-sm-3 control-label"
-                        for="expiry-month"
+                        htmlFor="expiry-month"
                       >
                         Expiration Date
                       </label>
@@ -246,7 +283,7 @@ class Paymentpage extends React.Component {
                         <div className="row">
                           <div className="col-6">
                             <select
-                              className="form-control col-sm-12"
+                              className={`form-control col-sm-12 ${this.state.errors.expirationMonth ? 'is-invalid' : ''}`}
                               name="expiry-month"
                               id="expiry-month"
                               onChange={this.handleExpirationMonth}
@@ -265,10 +302,13 @@ class Paymentpage extends React.Component {
                               <option value="11">Nov (11)</option>
                               <option value="12">Dec (12)</option>
                             </select>
+                            {this.state.errors.expirationMonth && (
+                              <div className="invalid-feedback">{this.state.errors.expirationMonth}</div>
+                            )}
                           </div>
                           <div className="col-6">
                             <select
-                              className="form-control"
+                              className={`form-control ${this.state.errors.expirationYear ? 'is-invalid' : ''}`}
                               name="expiry-year"
                               value={this.state.expirationYear}
                               onChange={this.handleExpirationYear}
@@ -279,22 +319,28 @@ class Paymentpage extends React.Component {
                               <option value="2022">2026</option>
                               <option value="2023">2027</option>
                             </select>
+                            {this.state.errors.expirationYear && (
+                              <div className="invalid-feedback">{this.state.errors.expirationYear}</div>
+                            )}
                           </div>
                         </div>
                       </div>
                     </div>
                     <div className="form-group">
-                      <label className="col-sm-3 control-label" for="cvv">
+                      <label className="col-sm-3 control-label" htmlFor="cvv">
                         Card CVV
                       </label>
                       <div className="col-sm-3">
                         <input
                           type="text"
-                          className="form-control"
+                          className={`form-control ${this.state.errors.cvv ? 'is-invalid' : ''}`}
                           name="cvv"
                           id="cvv"
                           placeholder="Security Code"
                         />
+                        {this.state.errors.cvv && (
+                          <div className="invalid-feedback">{this.state.errors.cvv}</div>
+                        )}
                       </div>
                     </div>
                     <div className="form-group">
@@ -371,4 +417,5 @@ class Paymentpage extends React.Component {
     }
   }
 }
+
 export default Paymentpage;

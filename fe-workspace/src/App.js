@@ -12,44 +12,57 @@ class App extends React.Component {
     products: [],
     bearerToken: "",
     headers: "",
+    inThirtyMinutes: new Date(new Date().getTime() + 30 * 60 * 1000)
   };
 
-  fetchCategoryData(headers) {
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/category/dresses`, {
-        headers: headers,
-      })
-      .then((res) => {
-        const products = res.data.hits;
-        this.setState({ products });
-      });
+  async fetchCategoryData1(headers) {
+    try {
+      const res = await axios.get(
+        `${process.env.REACT_APP_API_URL}/category/dresses`, {
+           headers: headers 
+          }
+      );
+      return res.data.hits;
+    } catch (error) {
+      console.error("Error fetching cart info", error);
+      window.location.href = `${process.env.REACT_APP_STOREFRONT_URL}/errorpage`;
+    }
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const bearerToken = Cookies.get("bearerToken");
     const inThirtyMinutes = 1 / 48;
 
     if (!bearerToken) {
       axios
         .get(`${process.env.REACT_APP_API_URL}/shopper/auth/guest`)
-        .then((res) => {
+        .then(async (res) => {
           const bearerToken = res.data;
           Cookies.set("bearerToken", bearerToken, {
             expires: inThirtyMinutes,
           });
-          this.setState({ bearerToken });
           const headers = {
             "Content-Type": "application/json",
             Authorization: "Bearer " + bearerToken,
           };
-          this.fetchCategoryData(headers);
+          this.setState({ headers });
+          const categoryInfo = await this.fetchCategoryData1(headers);
+          if (categoryInfo) {
+            const products = categoryInfo;
+            this.setState({ products });
+          }
         });
     } else {
       const headers = {
         "Content-Type": "application/json",
         Authorization: "Bearer " + bearerToken,
       };
-      this.fetchCategoryData(headers);
+      this.setState({ headers });
+      const categoryInfo = await this.fetchCategoryData1(headers);
+      if (categoryInfo) {
+        const products = categoryInfo;
+        this.setState({ products });
+      }
     }
   }
 

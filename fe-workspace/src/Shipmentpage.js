@@ -18,14 +18,14 @@ class Shipmentpage extends React.Component {
       sPostalCode: "",
       sCity: "",
       sState: "",
-      sCountry: "",
+      sCountry: "US", // Default value set to "US"
       bFirstName: "",
       bLastName: "",
       bAddress1: "",
       bPostalCode: "",
       bCity: "",
       bState: "",
-      bCountry: "",
+      bCountry: "US", // Default value set to "US"
       basketId: props.match.params.id,
       submitted: false,
       isLoaded: false,
@@ -33,12 +33,15 @@ class Shipmentpage extends React.Component {
       basket: [],
       headers: "",
       inThirtyMinutes: new Date(new Date().getTime() + 30 * 60 * 1000),
+      errors: {}, // To store validation errors
     };
   }
 
   handleChange = (event) => {
+    const { name, value } = event.target;
     this.setState({
-      [event.target.name]: event.target.value,
+      [name]: value,
+      errors: { ...this.state.errors, [name]: '' } // Clear the error for the specific field
     });
   };
 
@@ -48,7 +51,25 @@ class Shipmentpage extends React.Component {
     });
   };
 
+  validateFields = () => {
+    const errors = {};
+    if (!this.state.sFirstName) errors.sFirstName = "First Name is required";
+    if (!this.state.sLastName) errors.sLastName = "Last Name is required";
+    if (!this.state.sAddress1) errors.sAddress1 = "Address Line 1 is required";
+    if (!this.state.sPostalCode) errors.sPostalCode = "Postal Code is required";
+    if (!this.state.sCity) errors.sCity = "City is required";
+    if (!this.state.sState) errors.sState = "State is required";
+    return errors;
+  };
+
   handleSubmission = (event) => {
+    event.preventDefault();
+    const errors = this.validateFields();
+    if (Object.keys(errors).length > 0) {
+      this.setState({ errors });
+      return;
+    }
+
     var billing = this.state.useAsBilling
       ? {}
       : {
@@ -150,6 +171,7 @@ class Shipmentpage extends React.Component {
 
   render() {
     const basketObj = this.state.basket;
+    const { errors } = this.state;
     if (this.state.submitted === false) {
       return (
         <div>
@@ -180,85 +202,105 @@ class Shipmentpage extends React.Component {
             <div className="row">
               <div className="col-lg-8 col-sm-12">
                 <form onSubmit={this.handleSubmission}>
-                  <div className="form-group">
+                  <div className="form-group shipping">
                     <h5>
                       <span className="fa fa-truck"></span> Shipping Address
                     </h5>
                     <div className="row">
                       <div className="col-sm">
                         <input
-                          className="form-control form-control-sm mb-3"
+                          className={`form-control form-control-sm mb-3 ${errors.sFirstName ? 'is-invalid' : ''}`}
                           placeholder="First Name"
                           type="text"
                           name="sFirstName"
                           value={this.state.sFirstName}
                           onChange={this.handleChange}
                         />
+                        {errors.sFirstName && (
+                          <div className="invalid-feedback">{errors.sFirstName}</div>
+                        )}
                       </div>
                       <div className="col-sm">
                         <input
-                          className="form-control form-control-sm mb-3"
+                          className={`form-control form-control-sm mb-3 ${errors.sLastName ? 'is-invalid' : ''}`}
                           type="text"
                           placeholder="Last Name"
                           name="sLastName"
                           value={this.state.sLastName}
                           onChange={this.handleChange}
                         />
+                        {errors.sLastName && (
+                          <div className="invalid-feedback">{errors.sLastName}</div>
+                        )}
                       </div>
                     </div>
                     <input
-                      className="form-control form-control-sm mb-3"
+                      className={`form-control form-control-sm mb-3 ${errors.sAddress1 ? 'is-invalid' : ''}`}
                       type="text"
                       placeholder="Address Line 1"
                       name="sAddress1"
                       value={this.state.sAddress1}
                       onChange={this.handleChange}
                     />
+                    {errors.sAddress1 && (
+                      <div className="invalid-feedback">{errors.sAddress1}</div>
+                    )}
                     <div className="row">
                       <div className="col-sm">
                         <input
-                          className="form-control form-control-sm mb-3 input-sm"
+                          className={`form-control form-control-sm mb-3 input-sm ${errors.sPostalCode ? 'is-invalid' : ''}`}
                           placeholder="Postal Code"
                           type="text"
                           name="sPostalCode"
                           value={this.state.sPostalCode}
                           onChange={this.handleChange}
                         />
+                        {errors.sPostalCode && (
+                          <div className="invalid-feedback">{errors.sPostalCode}</div>
+                        )}
                       </div>
                       <div className="col-sm">
                         <input
-                          className="form-control form-control-sm mb-3 input-sm"
+                          className={`form-control form-control-sm mb-3 input-sm ${errors.sCity ? 'is-invalid' : ''}`}
                           placeholder="City"
                           type="text"
                           name="sCity"
                           value={this.state.sCity}
                           onChange={this.handleChange}
                         />
+                        {errors.sCity && (
+                          <div className="invalid-feedback">{errors.sCity}</div>
+                        )}
                       </div>
                       <div className="col-sm">
                         <input
-                          className="form-control form-control-sm mb-3 input-sm"
+                          className={`form-control form-control-sm mb-3 input-sm ${errors.sState ? 'is-invalid' : ''}`}
                           placeholder="State"
                           type="text"
                           name="sState"
                           value={this.state.sState}
                           onChange={this.handleChange}
                         />
+                        {errors.sState && (
+                          <div className="invalid-feedback">{errors.sState}</div>
+                        )}
                       </div>
                     </div>
-                    <input
-                      className="form-control form-control-sm mb-3 input-sm"
-                      placeholder="Country Code - ex US"
-                      type="text"
-                      name="sCountry"
-                      value={this.state.sCountry}
-                      onChange={this.handleChange}
-                    />
+                    <select
+                        className="form-control form-control-sm mb-3 input-sm"
+                        name="sCountry"
+                        value="{this.state.sCountry}"
+                        onChange={this.handleChange}
+                        disabled
+                      >
+                      <option value="US">US</option>
+                    </select>
                     <label className="text-muted">Use same as shipping :</label>
                     <input
                       type="checkbox"
                       checked={this.state.useAsBilling}
                       onChange={this.handleUseAsShipping}
+                      disabled
                     />
                   </div>
                   {this.state.useAsBilling ? (
@@ -332,14 +374,15 @@ class Shipmentpage extends React.Component {
                             />
                           </div>
                         </div>
-                        <input
+                        <select
                           className="form-control form-control-sm mb-3 input-sm"
-                          placeholder="Country Code - ex US"
-                          type="text"
                           name="bCountry"
                           value={this.state.bCountry}
                           onChange={this.handleChange}
-                        />
+                          disabled
+                        >
+                          <option value="US">US</option>
+                        </select>
                       </div>
                     </div>
                   )}

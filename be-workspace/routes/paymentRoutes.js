@@ -4,16 +4,15 @@ var router = express.Router();
 // import Packages from "commerce-sdk" | Configurations to use while creating API Clients
 const {Checkout,Product} = require("commerce-sdk");
 // Create a configuration to use when creating API clients. Also fetch the authorization token in the config obect.
-var config = require('./configs/getauthorizationtoken.js');
-
+var config1 = require('./configs/config');
 
 //The below function adds a given payment Instrument in the basket and returns the updated basket
 function addPaymentInstrument (basketID,paymentParams) {
     return new Promise(function(resolve, reject){
-        
-        try {    
+        try {
+            config1.headers["authorization"] = headerToken;
             // Create a new ShopperBaskets API client
-            const shopperBasketsClient = new Checkout.ShopperBaskets(config);
+            const shopperBasketsClient = new Checkout.ShopperBaskets(config1);
             const basketResult = shopperBasketsClient.addPaymentInstrumentToBasket({
                 parameters: {
                     basketId: basketID
@@ -41,8 +40,9 @@ function addPaymentInstrument (basketID,paymentParams) {
 router.get('/addpaymentinstrument/:basketId', function(req, res) {
     var basketID = req.params.basketId;
     var paymentParams = req.query;
+    var headerToken = req.headers.authorization;
    // var orderTotal = req.params.orderAmount;
-    addPaymentInstrument(basketID,paymentParams).then(function(resultsObj) {
+    addPaymentInstrument(basketID, paymentParams, headerToken).then(function(resultsObj) {
         if (resultsObj) {
             res.send (resultsObj);
         } else {

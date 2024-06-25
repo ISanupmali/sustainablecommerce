@@ -4,10 +4,12 @@ var router = express.Router();
 const { Checkout, ClientConfig } = require("commerce-sdk");
 // Create a configuration to use when creating API clients. Also fetch the authorization token in the config obect.
 var config = require('./configs/getauthorizationtoken.js');
+var config1 = require('./configs/config');
 
-function addAddress (basketId, shippingaddress, billingaddress, useAsBilling) {
+function addAddress (basketId, shippingaddress, billingaddress, useAsBilling, headerToken) {
     return new Promise(function(resolve, reject){
-        try {    
+        try {
+            config1.headers["authorization"] = headerToken;
             addShippingMethod(basketId).then(function(initBasketResult) {
                 if(initBasketResult){
                     addShippingAddress(basketId, shippingaddress, useAsBilling).then(function(afterShippingBAsket){
@@ -17,7 +19,7 @@ function addAddress (basketId, shippingaddress, billingaddress, useAsBilling) {
                             }
                             else{
                                 // Create a new ShopperBaskets API client
-                                const shopperBasketsClient = new Checkout.ShopperBaskets(config);
+                                const shopperBasketsClient = new Checkout.ShopperBaskets(config1);
                                 // shopperBasketsClient.
                                 const basketResult = shopperBasketsClient.updateBillingAddressForBasket({
                                     body: {
@@ -109,6 +111,7 @@ router.get('/shipment/add/:basketId', function(req, res) {
     var sa = JSON.stringify(req.query.shipping);
     var shippingaddress = JSON.parse(sa);
     var useAsBilling = req.query.useAsBilling;
+    var headerToken = req.headers.authorization;
 
     if(useAsBilling === 'true') {
         var billingaddress = shippingaddress;
@@ -117,7 +120,7 @@ router.get('/shipment/add/:basketId', function(req, res) {
         var billingaddress = JSON.parse(ba);
     }
     
-    addAddress(basketId, shippingaddress, billingaddress, useAsBilling).then(function(resultsObj) {
+    addAddress(basketId, shippingaddress, billingaddress, useAsBilling, headerToken).then(function(resultsObj) {
         if (resultsObj) {
             res.send (resultsObj);
         } else {

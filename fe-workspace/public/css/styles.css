@@ -10827,3 +10827,33 @@ textarea.form-control-lg {
 .cattitle {
   text-transform: capitalize;
 }
+
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 40px 80px;
+  background-color: #5cb85c;
+  color: white;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  font-size: 1.5em;
+  z-index: 1000;
+  text-align: center;
+}
+
+.logo {
+  font-weight: bolder;
+  font-size: xx-large;
+}
+img.img-responsive.cartimg {
+  width: 140px;
+}
+.invalid-feedback {
+  margin-top: -16px;
+  margin-bottom: 16px;
+}
+.paymentpage .invalid-feedback {
+  margin-top: 0px;
+}

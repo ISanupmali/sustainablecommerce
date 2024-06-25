@@ -3,6 +3,15 @@ import { Link } from "react-router-dom";
 import ReactDOM from "react-dom";
 
 class Navbar extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { showPopup: false };
+  }
+
+  togglePopup = () => {
+    this.setState({ showPopup: !this.state.showPopup });
+  };
+
   render() {
     var basketData = sessionStorage.getItem("basketData")
       ? JSON.parse(sessionStorage.getItem("basketData"))
@@ -10,8 +19,8 @@ class Navbar extends React.Component {
     return (
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <div className="container px-4 px-lg-5">
-          <Link className="navbar-brand" to="/">
-            Spartans
+          <Link className="navbar-brand logo" to="/">
+            SC
           </Link>
           <button
             className="navbar-toggler"
@@ -46,37 +55,10 @@ class Navbar extends React.Component {
                   Electronics
                 </Link>
               </li>
-              <li className="nav-item dropdown">
-                <Link
-                  className="nav-link dropdown-toggle"
-                  id="navbarDropdown"
-                  to="#"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  Shop
-                </Link>
-                <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <li>
-                    <Link className="dropdown-item" to="/">
-                      All Products
-                    </Link>
-                  </li>
-                  <li>
-                    <hr className="dropdown-divider" />
-                  </li>
-                  <li>
-                    <Link className="dropdown-item" to="/">
-                      Popular Items
-                    </Link>
-                  </li>
-                  <li>
-                    <Link className="dropdown-item" to="/">
-                      New Arrivals
-                    </Link>
-                  </li>
-                </ul>
+              <li className="nav-item">
+                <button className="nav-link btn btn-link" onClick={this.togglePopup}>
+                  Info
+                </button>
               </li>
             </ul>
             <form className="d-flex">
@@ -93,6 +75,14 @@ class Navbar extends React.Component {
             </form>
           </div>
         </div>
+        {this.state.showPopup && (
+          <div className="popup">
+            <div className="popup-inner">
+              <p>This site is a Proof of Concept (POC). <br/><br/>If you experience any errors while using the site, please clear the site data from your browser settings and start again from the homepage.</p>
+              <button className="btn btn-secondary" onClick={this.togglePopup}>Close</button>
+            </div>
+          </div>
+        )}
       </nav>
     );
   }

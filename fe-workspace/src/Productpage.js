@@ -18,6 +18,7 @@ class Productpage extends React.Component {
       headers: "",
       inThirtyMinutes: new Date(new Date().getTime() + 30 * 60 * 1000),
       isLoading: true,
+      showPopup: false,
     };
   }
 
@@ -90,6 +91,11 @@ class Productpage extends React.Component {
   }
 
   handleAddToBasket = (event) => {
+    this.setState({ showPopup: true });
+    setTimeout(() => {
+      this.setState({ showPopup: false });
+    }, 3000);
+
     var basketData = sessionStorage.getItem("basketData")
       ? JSON.parse(sessionStorage.getItem("basketData"))
       : "";
@@ -190,7 +196,7 @@ class Productpage extends React.Component {
           <meta name="description" content="{productObj.pageDescription}" />
           <meta name="theme-color" content="#ccc" />
         </Helmet>
-        <Navbar></Navbar>
+        <Navbar />
 
         <section className="py-5">
           {this.state.isLoading ? (
@@ -229,6 +235,11 @@ class Productpage extends React.Component {
             </div>
           )}
         </section>
+        {this.state.showPopup && (
+          <div className="popup">
+            Item added to the cart!
+          </div>
+        )}
         <Footer />
       </div>
     );
