@@ -80,26 +80,19 @@ class Paymentpage extends React.Component {
   };
 
   handleSubmission = (event) => {
-    alert(1);
     event.preventDefault();
     const errors = this.validateFields();
-    console.log(errors);
     if (Object.keys(errors).length > 0) {
       this.setState({ errors });
       return;
     }
 
-    alert(2);
-
     var mask = MaskedCardNumber(this.state.cardNumber);
     const urlParams = new URLSearchParams(this.props.location.search);
     const orderTotal = urlParams.get("orderTotal");
     this.setState({ submitted: true });
-    const basketObj = this.state.basket;
-    console.log(orderTotal);
 
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/addpaymentinstrument/` + this.state.basketId, {
+    axios.get(`${process.env.REACT_APP_API_URL}/addpaymentinstrument/` + this.state.basketId, {
           params: {
             cardType: this.state.cardType,
             expirationMonth: this.state.expirationMonth,
@@ -107,8 +100,8 @@ class Paymentpage extends React.Component {
             holder: this.state.cardHolder,
             maskedNumber: mask,
             orderTotal: orderTotal,
-            headers: this.state.headers,
           },
+          headers: this.state.headers
         }
       )
       .then((res) => {

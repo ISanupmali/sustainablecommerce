@@ -12,28 +12,59 @@ class OrderConfirmationPage extends React.Component {
       basketId: props.match.params.id,
       order: [],
       isLoaded: false,
+      bearerToken: "",
+      headers: "",
+      inThirtyMinutes: new Date(new Date().getTime() + 30 * 60 * 1000)
     };
   }
+  
+  async placeOrder(headers) {
+    try {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/createorder/` + this.props.match.params.id, { headers: headers });
+      return res.data;
+    } catch (error) {
+      console.error("Error placing an Order", error);
+      window.location.href = `${process.env.REACT_APP_STOREFRONT_URL}/errorpage`;
+    }
+  }
 
-  componentWillMount() {
-    axios
-      .get(
-        `${process.env.REACT_APP_API_URL}/createorder/` +
-          this.props.match.params.id
-      )
-      .then((res) => {
-        const order = res.data;
+  async componentDidMount() {
+    const bearerToken = Cookies.get("bearerToken");
+    const inThirtyMinutes = 1 / 48;
+
+    if (!bearerToken) {
+      axios
+        .get(`${process.env.REACT_APP_API_URL}/shopper/auth/guest`)
+        .then(async (res) => {
+          const bearerToken = res.data;
+          Cookies.set("bearerToken", bearerToken, {
+            expires: inThirtyMinutes,
+          });
+          const headers = {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + bearerToken,
+          };
+          this.setState({ headers });
+          const placeOrderResult = await this.placeOrder(headers);
+          if (placeOrderResult) {
+            const order = placeOrderResult;
+            this.setState({ order });
+            this.setState({ isLoaded: true });
+          }
+        });
+    } else {
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + bearerToken,
+      };
+      this.setState({ headers });
+      const placeOrderResult = await this.placeOrder(headers);
+      if (placeOrderResult) {
+        const order = placeOrderResult;
         this.setState({ order });
         this.setState({ isLoaded: true });
-        console.log(order);
-      });
-    const bearerToken = Cookies.get("bearerToken");
-    if (bearerToken) {
-      Cookies.set("bearerToken", bearerToken, {
-        expires: 0,
-      });
+      }
     }
-    sessionStorage.removeItem("basketData");
   }
 
   render() {

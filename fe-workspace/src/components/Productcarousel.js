@@ -6,9 +6,9 @@ const Productcarousel = (props) => {
   const productImages = props.images;
   console.log(productImages);
   return (
-    <Carousel>
-      {productImages.map((image) => (
-        <Carousel.Item>
+    <Carousel interval={2000}>
+      {productImages.map((image, index) => (
+        <Carousel.Item key={index}>
           <img
             className="d-block w-100"
             src={image.disBaseLink}
