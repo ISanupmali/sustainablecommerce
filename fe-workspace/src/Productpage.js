@@ -24,11 +24,7 @@ class Productpage extends React.Component {
 
   async fetchProductInfo(headers) {
     try {
-      const res = await axios.get(
-        `${process.env.REACT_APP_API_URL}/product/` +
-          this.props.match.params.id,
-        { headers: headers }
-      );
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/product/` + this.props.match.params.id, { headers: headers });
       return res.data;
     } catch (error) {
       console.error("Error fetching cart info", error);

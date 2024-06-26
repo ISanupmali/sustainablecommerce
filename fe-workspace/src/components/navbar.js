@@ -51,8 +51,8 @@ class Navbar extends React.Component {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/category/electronics">
-                  Electronics
+                <Link className="nav-link" to="/category/exotic-fruits">
+                  Exotic Fruits
                 </Link>
               </li>
               <li className="nav-item">

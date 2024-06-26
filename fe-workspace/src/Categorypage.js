@@ -96,7 +96,7 @@ class Categorypage extends React.Component {
         <section className="py-5 bg-light">
           <div className="container px-4 px-lg-5 mt-5">
             <h2 className="fw-bolder mb-4 cattitle text-capitalize">
-              {this.props.match.params.id} Category
+              {this.props.match.params.id.replace(/-/g, ' ')} Category
             </h2>
             {this.state.isLoading ? (
               <Loading />

@@ -7,7 +7,7 @@ const {Checkout,Product} = require("commerce-sdk");
 var config1 = require('./configs/config');
 
 //The below function adds a given payment Instrument in the basket and returns the updated basket
-function addPaymentInstrument (basketID,paymentParams) {
+function addPaymentInstrument (basketID, paymentParams, headerToken) {
     return new Promise(function(resolve, reject){
         try {
             config1.headers["authorization"] = headerToken;

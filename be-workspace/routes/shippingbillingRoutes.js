@@ -3,16 +3,15 @@ var router = express.Router();
 
 const { Checkout, ClientConfig } = require("commerce-sdk");
 // Create a configuration to use when creating API clients. Also fetch the authorization token in the config obect.
-var config = require('./configs/getauthorizationtoken.js');
 var config1 = require('./configs/config');
 
 function addAddress (basketId, shippingaddress, billingaddress, useAsBilling, headerToken) {
     return new Promise(function(resolve, reject){
         try {
             config1.headers["authorization"] = headerToken;
-            addShippingMethod(basketId).then(function(initBasketResult) {
+            addShippingMethod(basketId, headerToken).then(function(initBasketResult) {
                 if(initBasketResult){
-                    addShippingAddress(basketId, shippingaddress, useAsBilling).then(function(afterShippingBAsket){
+                    addShippingAddress(basketId, shippingaddress, useAsBilling, headerToken).then(function(afterShippingBAsket){
                         if(afterShippingBAsket){
                             if(useAsBilling === 'true'){
                                 resolve(afterShippingBAsket);
@@ -56,11 +55,12 @@ function addAddress (basketId, shippingaddress, billingaddress, useAsBilling, he
     });
 }
 
-function addShippingAddress (basketId, shippingaddress, useAsBilling) {
+function addShippingAddress (basketId, shippingaddress, useAsBilling, headerToken) {
     return new Promise(function(resolve, reject){
-        try {    
+        try {
+            config1.headers["authorization"] = headerToken;
             // Create a new ShopperBaskets API client
-            const shopperBasketsClient = new Checkout.ShopperBaskets(config);
+            const shopperBasketsClient = new Checkout.ShopperBaskets(config1);
             const basketResult = shopperBasketsClient.updateShippingAddressForShipment({
                 body: {
                     "address1": shippingaddress.address1,
@@ -84,11 +84,12 @@ function addShippingAddress (basketId, shippingaddress, useAsBilling) {
     });
 }
 
-function addShippingMethod (basketId) {
+function addShippingMethod (basketId, headerToken) {
     return new Promise(function(resolve, reject){
-        try {    
+        try {
+            config1.headers["authorization"] = headerToken;
             // Create a new ShopperBaskets API client
-            const shopperBasketsClient = new Checkout.ShopperBaskets(config);
+            const shopperBasketsClient = new Checkout.ShopperBaskets(config1);
             const basketResult = shopperBasketsClient.updateShippingMethodForShipment({
                 body: {
                     "id": "003"
