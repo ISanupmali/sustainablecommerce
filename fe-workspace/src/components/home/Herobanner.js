@@ -18,10 +18,15 @@ class Herobanner extends Component {
       });
 
     const fetchBanners = async () => {
-      const response = await client.getEntries({
-        content_type: 'spartansHomePage', // Later we can move to .env file it required
-      });
-      this.setState({ banners: response.items.map((item) => item.fields) });
+      try {
+            const response = await client.getEntries({
+            content_type: 'spartansHomePage', // Later we can move to .env file it required
+        });
+        this.setState({ banners: response.items.map((item) => item.fields) });
+      } catch (error) {
+        console.log('Error fetching banners:', error);
+        this.setState({ error: 'Failed to fetch banner data' });
+      }
     };
 
     fetchBanners();

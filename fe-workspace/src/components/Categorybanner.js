@@ -17,11 +17,17 @@ class Categorybanner extends Component {
       });
 
     const fetchBanners = async () => {
-      const response = await client.getEntries({
-        content_type: 'spartansCategoryBanner', // Later we can move to .env file it required
-      });
-      //console.log(response);
-      this.setState({ banners: response.items.map((item) => item.fields) });
+      try {
+            const response = await client.getEntries({
+            content_type: 'spartansCategoryBanner', // Later we can move to .env file it required
+        });
+        //console.log(response);
+        this.setState({ banners: response.items.map((item) => item.fields) });
+
+      } catch (error) {
+        console.log('Error fetching banners:', error);
+        this.setState({ error: 'Failed to fetch banner data' });
+      }
     };
 
     fetchBanners();
@@ -29,14 +35,14 @@ class Categorybanner extends Component {
 
   render() {
     const { banners } = this.state;  
-    const banner = banners.length ? banners[0] : null; console.log('Here', banner);
+    const banner = banners.length ? banners[0] : null; 
     if (!banner) {
         return null;
     }
     return (
         <div className="mb-5">
             <div className="category-banner">
-                <img src={banner.categoryBannerImage.fields.file.url} alt="Category Image" class="category-image" />
+                <img src={banner.categoryBannerImage.fields.file.url} alt="Category Image" className="category-image" />
                 <div className="category-content">
                     <h1 className="category-title">{banner.categoryBannerHeading}</h1>
                     <p className="category-description">{banner.categoryBannerCaption}</p>

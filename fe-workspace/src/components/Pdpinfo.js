@@ -17,12 +17,17 @@ class Pdpinfo extends Component {
         accessToken: `${process.env.REACT_APP_CONTENTFUL_API_ACCESS_TOKEN}`,
       });
 
-    const fetchBanners = async () => {
-      const response = await client.getEntries({
-        content_type: 'spartansPdpInfo', // Later we can move to .env file it required
-      });
-       this.setState({ pdpInfo: response.items[0] });
-    };
+      const fetchBanners = async () => {
+        try {
+          const response = await client.getEntries({
+            content_type: 'spartansPdpInfo',
+          });
+          this.setState({ pdpInfo: response.items[0] });
+        } catch (error) {
+          console.log('Error fetching info:', error);
+          this.setState({ error: 'Failed to fetch info data' });
+        }
+      };
 
     fetchBanners();
   }
