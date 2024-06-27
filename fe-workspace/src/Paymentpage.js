@@ -394,16 +394,6 @@ class Paymentpage extends React.Component {
             <meta name="theme-color" content="#ccc" />
           </Helmet>
           <Navbar></Navbar>
-          <div className="contashipping-heading container card bg-white">
-            <div className="row">
-              <div className="col-1">
-                <Spinner animation="border" size="lg" />
-              </div>
-              <div className="col-11">
-                <h3>Placing Your Order</h3>
-              </div>
-            </div>
-          </div>
           <Footer />
         </div>
       );
