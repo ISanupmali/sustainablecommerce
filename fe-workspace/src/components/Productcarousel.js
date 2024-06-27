@@ -4,7 +4,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 const Productcarousel = (props) => {
   const productImages = props.images;
-  console.log(productImages);
   return (
     <Carousel interval={2000}>
       {productImages.map((image, index) => (

@@ -5,6 +5,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import Navbar from "./components/navbar";
 import Footer from "./components/Footer";
+import Herobanner from "./components/home/Herobanner";
 import "./App.css";
 
 class App extends React.Component {
@@ -74,13 +75,7 @@ class App extends React.Component {
           <div className="container px-4 px-lg-5 my-5">
             <div className="row gx-4 gx-lg-5 align-items-center">
               <div className="col-md-12">
-                <span className="border">
-                  <img
-                    className="card-img-top mb-5 mb-md-0 border-0 "
-                    src="https://cdn.pixabay.com/photo/2024/03/26/11/57/woman-8656653_960_720.jpg"
-                    alt="..."
-                  />
-                </span>
+                <Herobanner/>
               </div>
             </div>
           </div>
@@ -91,7 +86,7 @@ class App extends React.Component {
             <h2 className="fw-bolder mb-4">Top Recommendations</h2>
             <div className="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
               {this.state.products.map((product) => (
-                <div className="col mb-5">
+                <div className="col mb-5" key={product.productId}>
                   <div className="card h-100">
                     <Link
                       className="btn btn-outline-dark mt-auto"
