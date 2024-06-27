@@ -18,6 +18,8 @@ import Shipmentpage from "./Shipmentpage";
 import Paymentpage from "./Paymentpage";
 import OrderConfirmationPage from "./Orderconfirmationpage";
 import RewardsPage from "./Rewardspage";
+import StorePortal from './StorePortal';
+import SpinWheel from './SpinWheel';
 
 const routing = (
   <Router>
@@ -32,6 +34,8 @@ const routing = (
       <Route path="/payment/:id" component={Paymentpage} />
       <Route path="/order/:id" component={OrderConfirmationPage} />
       <Route path="/orderrewards" component={RewardsPage} />
+      <Route path="/storeportal" component={StorePortal} />
+      <Route path="/spinwheel" component={SpinWheel} />
     </div>
   </Router>
 );

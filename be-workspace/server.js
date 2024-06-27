@@ -10,6 +10,9 @@ app.use(require('./routes/shippingbillingRoutes'));
 app.use(require('./routes/paymentRoutes'));
 app.use(require('./routes/orderRoutes'));
 app.use(require('./routes/authTokenRoutes'));
+app.use(require('./routes/StorePortal'));
+app.use(require('./routes/accesstoken/adminApiToken'));
+app.use(require('./routes/coupon'));
 
 /* CORS for Cross Site origin requests. */
 const cors = require('cors');
