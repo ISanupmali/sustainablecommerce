@@ -36,3 +36,51 @@
     transform: rotate(360deg);
   }
 }
+
+/*CSS for category banner*/
+.category-banner {
+  position: relative;
+  text-align: center;
+  color: white;
+}
+
+.category-image {
+  width: 100%;
+  height: auto;
+  opacity: 0.8;
+}
+
+.category-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.category-title {
+  font-size: 2.5rem;
+  margin: 0 0 10px 0;
+}
+
+.category-description {
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .category-title {
+      font-size: 1.8rem;
+  }
+
+  .category-description {
+      font-size: 1rem;
+  }
+
+  .category-content {
+      width: 90%;
+      padding: 15px;
+  }
+}

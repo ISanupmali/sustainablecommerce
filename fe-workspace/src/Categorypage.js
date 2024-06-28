@@ -6,6 +6,7 @@ import Navbar from "./components/navbar";
 import Footer from "./components/Footer";
 import { Link } from "react-router-dom";
 import Loading from "./components/Loading";
+import Categorybanner from "./components/Categorybanner";
 import "./App.css";
 
 class Categorypage extends React.Component {
@@ -93,11 +94,12 @@ class Categorypage extends React.Component {
     return (
       <div>
         <Navbar />
-        <section className="py-5 bg-light">
+        <section className="py-2 bg-light">
           <div className="container px-4 px-lg-5 mt-5">
             <h2 className="fw-bolder mb-4 cattitle text-capitalize">
               {this.props.match.params.id.replace(/-/g, ' ')} Category
             </h2>
+            <Categorybanner/>
             {this.state.isLoading ? (
               <Loading />
             ) : (

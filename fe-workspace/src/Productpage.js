@@ -6,6 +6,7 @@ import Footer from "./components/Footer";
 import { Helmet } from "react-helmet";
 import Loading from "./components/Loading";
 import Productcarousel from "./components/Productcarousel";
+import Pdpinfo from "./components/Pdpinfo";
 
 class Productpage extends React.Component {
   constructor(props) {
@@ -226,6 +227,9 @@ class Productpage extends React.Component {
                       Add to cart
                     </button>
                   </div>
+
+                  <br />
+                  <Pdpinfo />
                 </div>
               </div>
             </div>
