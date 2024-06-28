@@ -18,6 +18,7 @@ import Shipmentpage from "./Shipmentpage";
 import Paymentpage from "./Paymentpage";
 import OrderConfirmationPage from "./Orderconfirmationpage";
 import RewardsPage from "./Rewardspage";
+import Gamificationpage from "./Gamificationpage";
 
 const routing = (
   <Router>
@@ -32,6 +33,7 @@ const routing = (
       <Route path="/payment/:id" component={Paymentpage} />
       <Route path="/order/:id" component={OrderConfirmationPage} />
       <Route path="/orderrewards" component={RewardsPage} />
+      <Route path="/squatsgame" component={Gamificationpage} />
     </div>
   </Router>
 );
