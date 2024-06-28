@@ -1,7 +1,11 @@
 import React from 'react';
 import axios from 'axios';
+import Cookies from "js-cookie";
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
+
+const inThirtyMinutes = 1 / 48;
+const cookieName = 'accessToken';
 
 /**
  * Component for managing and displaying store portal functionality.
@@ -12,7 +16,6 @@ class StorePortal extends React.Component {
         super(props);
         this.state = {
             msg: '',
-            email: '',
             orderNo: '',
             orderObj: null,
             orderFound: false,
@@ -48,11 +51,21 @@ class StorePortal extends React.Component {
      * Fetches admin access token on component mount.
      */
     componentDidMount() {
+        this.getAdminAuthToken();
+    }
+
+    /**
+     * Get admin access token and set it in cookie and token vriable
+     */
+    getAdminAuthToken() {
         axios.get(`http://localhost:8080/get-accesstoken`)
             .then(res => {
                 console.log('[FE]Storeportal.js :: Admin Token Response: ' + JSON.stringify(res));
                 if (res.status === 200) {
                     this.setState({ token: res.data });
+                    Cookies.set(cookieName, res.data, {
+                        expires: inThirtyMinutes,
+                      });
                 } else {
                     console.log('[FE]Storeportal.js :: Error occurred While fetching Admin access token: ' + JSON.stringify(res));
                 }
@@ -69,6 +82,10 @@ class StorePortal extends React.Component {
     handleSubmission = (event) => {
         event.preventDefault();
         this.setState({ loading: true });
+        const cookieTokenValue = Cookies.get(cookieName);
+        if (!cookieTokenValue) {
+            this.getAdminAuthToken();
+        }
         axios.post(`http://localhost:8080/getOrder`, {
             body: {
                 orderNo: this.state.orderNo,
@@ -80,13 +97,7 @@ class StorePortal extends React.Component {
                 if (res.data === '404 Not Found') {
                     this.initializeState('Order Not Found!', false, null);
                 } else if (res.data && res.data.orderNo) {
-                    const email = res.data.customerInfo && res.data.customerInfo.email;
-                    if (this.state.email === email) {
-                        this.initializeState('Order Found', true, res.data);
-                    } else {
-                        this.initializeState('Invalid Input, Order Not Found!', false, null);
-                        console.error('[FE]Storeportal.js :: handleSubmission: Email in order ' + this.state.orderNo + ' not matching.');
-                    }
+                    this.initializeState('Order Found', true, res.data);
                 } else {
                     this.initializeState('Order Not Found!', false, null);
                 }
@@ -122,13 +133,6 @@ class StorePortal extends React.Component {
     };
 
     /**
-     * Updates state with email input value.
-     */
-    handleEmail = (event) => {
-        this.setState({ email: event.target.value });
-    };
-
-    /**
      * Renders the StorePortal component.
      */
     render() {
@@ -157,12 +161,6 @@ class StorePortal extends React.Component {
                                         <label className="col-sm-3 control-label" htmlFor="orderno">Order Number</label>
                                         <div className="col-sm-3">
                                             <input type="text" className="form-control" name="orderno" id="orderid" placeholder="Order Number" required value={this.state.orderNo} onChange={this.handleOrderNo} />
-                                        </div>
-                                    </div>
-                                    <div className="form-group">
-                                        <label className="col-sm-3 control-label" htmlFor="email">Email</label>
-                                        <div className="col-sm-3">
-                                            <input type="email" className="form-control" name="email" id="email" placeholder="Email" required value={this.state.email} onChange={this.handleEmail} />
                                         </div>
                                     </div>
                                     <div className="form-group" style={{ marginTop: '20px'}}>
