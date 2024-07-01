@@ -155,6 +155,7 @@ class SpinWheel extends Component {
               <div className="container">
                 <button style={styles.backButton} onClick={this.handleBackClick}>Go Back</button>
                 <div style={styles.result}>Final Prize: {finalPrize}</div>
+                <div>Coupon sent to the customer's email id.</div>
                 <div className="alert alert-success" role="alert">
                   <strong>Coupon Code: </strong>{couponCode}
                 </div>

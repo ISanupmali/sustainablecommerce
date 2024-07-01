@@ -17,6 +17,7 @@ class StorePortal extends React.Component {
         this.state = {
             msg: '',
             orderNo: '',
+            postalCode: '',
             orderObj: null,
             orderFound: false,
             token: '',
@@ -93,20 +94,26 @@ class StorePortal extends React.Component {
             }
         })
             .then(res => {
-                console.log('[FE]Storeportal.js :: getOrder Response:' + JSON.stringify(res));
-                if (res.data === '404 Not Found') {
-                    this.initializeState('Order Not Found!', false, null);
-                } else if (res.data && res.data.orderNo) {
-                    this.initializeState('Order Found', true, res.data);
+                console.log('[FE]Storeportal.js :: getOrder Response: ' + JSON.stringify(res));
+                const msg = res && res.data && res.data.msg ? res.data.msg : 'Order Not Found!';
+                if (res.data && res.data.data) {
+                    const shipments = res.data.data.shipments && res.data.data.shipments[0] ? res.data.data.shipments[0] : '';
+                    const postalCode = shipments && shipments.shippingAddress.postalCode ? shipments.shippingAddress.postalCode : '';
+                    if (this.state.postalCode === postalCode) {
+                        this.initializeState(msg, true, res.data.data);
+                    } else {
+                        this.initializeState('Invalid Input!', false, null);
+                    }
                 } else {
-                    this.initializeState('Order Not Found!', false, null);
+                    this.initializeState(msg, false, null);
                 }
             })
             .catch(err => {
+                console.log('[FE]Storeportal.js :: Exception: ' + err);
                 if (err.response && err.response.status === 404) {
                     this.initializeState('Order Not Found!', false, null);
                 } else {
-                    this.initializeState('Error occurred: ' + err.message, false, null);
+                    this.initializeState('Exception occurred!' + false, null);
                 }
             })
             .finally(() => {
@@ -130,6 +137,13 @@ class StorePortal extends React.Component {
      */
     handleOrderNo = (event) => {
         this.setState({ orderNo: event.target.value });
+    };
+
+    /**
+     * Updates state with postalCode input value.
+     */
+    handlePostalCode = (event) => {
+        this.setState({ postalCode: event.target.value });
     };
 
     /**
@@ -163,6 +177,12 @@ class StorePortal extends React.Component {
                                             <input type="text" className="form-control" name="orderno" id="orderid" placeholder="Order Number" required value={this.state.orderNo} onChange={this.handleOrderNo} />
                                         </div>
                                     </div>
+                                    <div className="form-group">
+                                        <label className="col-sm-3 control-label" htmlFor="postalCode">Postal Code</label>
+                                        <div className="col-sm-3">
+                                            <input type="text" className="form-control" name="postalCode" id="postalCode" placeholder="Postal Code" required value={this.state.postalCode} onChange={this.handlePostalCode} />
+                                        </div>
+                                    </div>
                                     <div className="form-group" style={{ marginTop: '20px'}}>
                                         <div className="col-sm-offset-3 col-sm-9">
                                             <button type="submit" className="btn btn-success">Search</button>
@@ -190,9 +210,19 @@ class StorePortal extends React.Component {
                                             <div className="customer-text row">
                                                 <div className="col-12">
                                                     <h5> Customer Details</h5>
-                                                    <span>Customer No : {orderObj.customerInfo && orderObj.customerInfo.customerNo}</span><br />
+                                                    { orderObj.customerInfo && orderObj.customerInfo.email ? (
+                                                        <div>
+                                                            <span>Customer Type: </span><span style={{ color: 'purple' }}>Registered</span><br />
+                                                            <span>Customer No : {orderObj.customerInfo && orderObj.customerInfo.customerNo}</span><br />
+                                                            <span>Email : {(orderObj.customerInfo && orderObj.customerInfo.email)} </span><br />
+                                                        </div>
+                                                    ) : (
+                                                        <div>
+                                                            <span>Customer Type: </span><span style={{ color: 'purple' }}>Guest</span><br />
+                                                            <span>Customer Name : {orderObj.customerInfo && orderObj.customerInfo.customerName} </span> <br />
+                                                        </div>
+                                                    )}
                                                     <span>Customer Name : {orderObj.customerInfo && orderObj.customerInfo.customerName} </span> <br />
-                                                    <span>Email : {(orderObj.customerInfo && orderObj.customerInfo.email)} </span>
                                                 </div>
                                             </div>
                                             <hr />
