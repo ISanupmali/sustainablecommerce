@@ -21,7 +21,7 @@ const adminApiConfig = {
         // Grant type for the OAuth2.0 token request
         grant_type: 'client_credentials',
         // Scope of the access token
-        scope: 'SALESFORCE_COMMERCE_API:zzky_002 sfcc.promotions.rw sfcc.orders.rw'
+        scope: 'SALESFORCE_COMMERCE_API:zzky_009 sfcc.promotions.rw sfcc.orders.rw'
     }
 }
 

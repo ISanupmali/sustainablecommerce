@@ -1,6 +1,8 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 const bodyParser = require("body-parser");
+const shopperOrders = require ('../scripts/sdk/ShopperOrders');
+const responseUtils = require ('../utils/ResponseUtils');
 
 /** bodyParser.urlencoded(options)
  * Parses the text as URL encoded data (which is how browsers tend to send form data from regular forms set to POST)
@@ -15,50 +17,25 @@ router.use(bodyParser.urlencoded({
  */
 router.use(bodyParser.json());
 
-const { Checkout } = require("commerce-sdk");
-var config = require('./configs/config');
-
-// The below function searches for an order and returns the order object
-async function searchOrder(orderNo, headerToken) {
-    try {
-        // Set authorization header token in configuration
-        config.headers["authorization"] = headerToken;
-
-        // Create a new ShopperSearch API client
-        const shopperOrdersClient = new Checkout.Orders(config);
-
-        // Search for the specified order
-        const searchResults = await shopperOrdersClient.getOrder({
-            parameters: {
-                "orderNo": orderNo,
-                "organizationId": config.parameters.organizationId,
-                "siteId": config.parameters.siteId
-            }
-        });
-        return searchResults;
-    } catch (e) {
-        throw e;
-    }
-}
-
 // Route to retrieve order using order ID
 router.post('/getOrder', async function(req, res) {
     const { orderNo, token } = req.body.body; // Extract orderNo and token from request body
 
     try {
-        const resultsObj = await searchOrder(orderNo, token);
+        const resultsObj = await shopperOrders.getOrder(orderNo, token);
         if (resultsObj) {
-            res.send(resultsObj); // Send order details as JSON response
+            res.send(responseUtils.resultObj('200', orderNo + ' found', resultsObj, false));
         } else {
             console.log("No results for Order");
-            res.status(404).send('404 Not Found'); // Send 404 status if order not found
+            res.send(responseUtils.resultObj('404', orderNo + ' not found!', null, true));
         }
     } catch (err) {
-        console.log(err);
-        if (err.message === '404 Not Found') {
-            res.status(404).send('Order Not Found'); // Handle specific error message for order not found
+        console.log('[BE] StorePortal.js :: getOrder: Error: ' + err);
+        const status = err && err.response && err.response.status ? err.response.status : '';
+        if (status == 404 || status == 403) {
+            res.send(responseUtils.resultObj(status, orderNo + ' not found!', null, true));
         } else {
-            res.status(500).send(err.message); // Handle other errors with 500 status
+            res.send(responseUtils.resultObj(status, 'Exception Occured!', null, true));
         }
     }
 });
