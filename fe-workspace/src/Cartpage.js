@@ -6,6 +6,7 @@ import Footer from "./components/Footer";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import "./App.css"; // Ensure to import the CSS file
+import CartTotal from "./components/CartTotal";
 const inThirtyMinutes = 1 / 48;
 
 class Cartpage extends React.Component {
@@ -211,7 +212,7 @@ class Cartpage extends React.Component {
                 <span className="fa fa-shopping-cart"></span> Your Cart
               </h5>
             </div>
-            <div className="col col-lg-3 col-sm-4">
+            <div className="col col-lg-3 col-sm-4 text-end">
               <Link to="/" className="btn btn-warning btn-sm btn-block" role="button">
                 <span className="glyphicon glyphicon-share-alt"></span> Continue shopping
               </Link>
@@ -319,17 +320,8 @@ class Cartpage extends React.Component {
                 </div>
                 <div className="col-lg-12 col-sm-12">
                   <div className="alert alert-info">
-                    <p className="text-right font-weight-lighter">
-                      Product Sub Total:{" "}
-                      <strong>${parseFloat(basket.productSubTotal).toFixed(2)}</strong>
-                      <br />
-                      Adjusted Total Tax:{" "}
-                      <strong>${basket.adjustedMerchandizeTotalTax}</strong>
-                      <br />
-                      Total: <strong>${parseFloat(basket.productTotal).toFixed(2)}</strong>
-                      <br />
-                    </p>
-                    <div className="form-check mb-1 small">
+                    <CartTotal basket={basket} />
+                    <div className="form-check mb-1 small mt-3">
                       <input className="form-check-input" type="checkbox" id="tnc" />
                       <label className="form-check-label" htmlFor="tnc">
                         I agree to the <a href="#">terms and conditions</a>

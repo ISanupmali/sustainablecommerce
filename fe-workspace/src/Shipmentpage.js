@@ -6,6 +6,7 @@ import Footer from "./components/Footer";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import Spinner from "react-bootstrap/Spinner";
+import CartTotal from "./components/CartTotal";
 import "./App.css";
 
 class Shipmentpage extends React.Component {
@@ -188,7 +189,7 @@ class Shipmentpage extends React.Component {
                   Billing Info
                 </h5>
               </div>
-              <div className="col col-lg-3 col-sm-4">
+              <div className="col col-lg-3 col-sm-4 text-end">
                 <a
                   href="/"
                   className="btn btn-warning btn-sm btn-block"
@@ -402,9 +403,9 @@ class Shipmentpage extends React.Component {
                 </form>
               </div>
               <div className="col-lg-4 col-sm">
-                <div className="alert alert-info">
+                <div className="alert alert-success">
                   <div className="badge-warning mb-3">
-                    <span className="fa fa-lg fa-exclamation-triangle"></span>{" "}
+                    <span className="fa fa-lg fa-earth"></span>{" "}
                     BOPIS - BUY ONLINE PICKUP IN STORE
                   </div>
                   <div className="border border-secondary p-2 rounded">
@@ -415,21 +416,7 @@ class Shipmentpage extends React.Component {
                 </div>
                 <hr />
                 <div className="alert alert-info">
-                  <p className="text-right font-weight-lighter">
-                    Product Sub Total:{" "}
-                    <strong>
-                      ${parseFloat(basketObj.productSubTotal).toFixed(2)}
-                    </strong>
-                    <br />
-                    Adjusted Total Tax:{" "}
-                    <strong>${basketObj.adjustedMerchandizeTotalTax}</strong>
-                    <br />
-                    Total:{" "}
-                    <strong>
-                      ${parseFloat(basketObj.productTotal).toFixed(2)}
-                    </strong>
-                    <br />
-                  </p>
+                  <CartTotal basket={basketObj} />
                 </div>
               </div>
             </div>

@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import './StorePortal.css'; // Import the custom CSS file
-
+import Card from 'react-bootstrap/Card';
 const inThirtyMinutes = 1 / 48;
 const cookieName = 'accessToken';
 
@@ -131,22 +131,44 @@ class StorePortal extends React.Component {
                 <section className="section">
                     <div className="container">
                         <div className="jumbotron">
-                            <h1 className="display-4">Delivery Centre - Store Portal</h1>
+                            
+                            <h1 className="display-4 text-center">Delivery Centre - Store Portal</h1>
                             <hr className="my-4" />
-                            <p>Please enter the order number and the associated zip code to fetch the details of the order: </p>
-                            <form onSubmit={this.handleSubmission}>
-                                <fieldset>
-                                    <div className="form-group">
-                                        <label htmlFor="orderno">Order Number</label>
-                                        <input type="text" className="form-control" name="orderno" id="orderid" placeholder="Order Number" required value={this.state.orderNo} onChange={this.handleOrderNo} />
-                                    </div>
-                                    <div className="form-group">
-                                        <label htmlFor="postalCode">Postal Code</label>
-                                        <input type="text" className="form-control" name="postalCode" id="postalCode" placeholder="Postal Code" required value={this.state.postalCode} onChange={this.handlePostalCode} />
-                                    </div>
-                                    <button type="submit" className="btn btn-primary btn-block">Search</button>
-                                </fieldset>
-                            </form>
+                            
+                            <div className="row">
+                                <div className="col-6 mx-auto">
+                                    <Card>
+                                        <Card.Header>Please enter the order number and the associated zip code to fetch the details of the order</Card.Header>
+                                        <Card.Body>
+                                            <Card.Text>
+                                                <form onSubmit={this.handleSubmission}>
+                                                    <fieldset>
+                                                        <div className="form-group">
+                                                            <div className="col-12">
+                                                                <input type="text" className="form-control" name="orderno" id="orderid" placeholder="Order Number" required value={this.state.orderNo} onChange={this.handleOrderNo} />
+                                                            </div>
+                                                        </div>
+                                                        <div className="form-group mt-3">
+                                                            <div className="col-12">
+                                                                <input type="text" className="form-control" name="postalCode" id="postalCode" placeholder="Postal Code" required value={this.state.postalCode} onChange={this.handlePostalCode} />
+                                                            </div>
+                                                        </div>
+                                                        <div className="form-group" style={{ marginTop: '20px'}}>
+                                                            <div className="col-12">
+                                                                <button type="submit" className="btn btn-success w-100">Search</button>
+                                                            </div>
+                                                            <p className="small mt-3 text-center">Click "Search" to Get Order details.</p>
+                                                        </div>
+                                                    </fieldset>
+                                                </form>
+                                            </Card.Text>
+                                            
+                                        </Card.Body>
+                                    </Card>
+                                </div>
+                            </div>
+
+                            
                             {loading ? (
                                 <div className="spinner-border text-primary" role="status">
                                     <span className="sr-only">Loading...</span>
@@ -210,7 +232,7 @@ class StorePortal extends React.Component {
                                             <strong>{msg}</strong> Please try again.
                                         </div>
                                     ) : (
-                                        <p className="mt-4">Click "Search" to retrieve data.</p>
+                                        <p className="mt-4"></p>
                                     )}
                                 </div>
                             )}
