@@ -110,6 +110,9 @@ class Cartpage extends React.Component {
                   Opt for BOPIS - Pick-up in Store and use any green mode of transportation to avail exciting offers at the Pick-up Counter.
                   <br/><br/><br/>
                   <i class="fa-solid fa-charging-station fa-5x"></i> or <i class="fa-solid fa-person-biking fa-5x"></i> or <i class="fa-solid fa-bus fa-5x"></i>
+                  <br/><br/><br/>
+                  With every In-Store Delivery, we could save as much as 100 grams of plastic waste. 
+                  <br/>So let's contribute in making our planet <i class="fa-solid fa-earth-americas"></i> a better place.
                 </div>
               </div>
             </div>
