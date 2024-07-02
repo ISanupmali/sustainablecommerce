@@ -303,7 +303,7 @@ class Cartpage extends React.Component {
                             </div>
                           )}
                         </form>)) : (
-                      <div className="row gx-4 gx-lg-5 row-cols-2 row-cols-xl-4">
+                      <div className="row">
                         <div className="col col-lg-8" >
                           <div className="col-12">
                             <span>Store Name : {Cookies.get('storeName')}</span><br />
