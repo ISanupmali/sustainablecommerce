@@ -15,6 +15,7 @@ class OrderConfirmationPage extends React.Component {
       order: [],
       isLoaded: false,
       bearerToken: "",
+      token: '',
       headers: "",
       inThirtyMinutes: new Date(new Date().getTime() + 30 * 60 * 1000),
     };
@@ -31,6 +32,39 @@ class OrderConfirmationPage extends React.Component {
       console.error("Error placing an Order", error);
       window.location.href = `${process.env.REACT_APP_STOREFRONT_URL}/errorpage`;
     }
+  }
+
+  async updateOrderStatus (orderNo) {
+    axios.get(`${process.env.REACT_APP_API_URL}/get-accesstoken`)
+      .then(async res => {
+          console.log('[FE]Storeportal.js :: Admin Token Response: ' + JSON.stringify(res));
+          if (res.status === 200) {
+              const authheaders = {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " +res.data,
+              };
+              try {
+                const res = await axios.post(
+                  `${process.env.REACT_APP_API_URL}/updatestatus/` + orderNo,
+                  { data: '' },
+                  { headers: authheaders }
+                );
+                return res.data;
+              } catch (error) {
+                console.error("Error updating Order Status", error);
+                /* Not needed to redirect to error for just order status update 
+                window.location.href = `${process.env.REACT_APP_STOREFRONT_URL}/errorpage`;
+                */
+              }
+          } else {
+              console.log('[FE]Storeportal.js :: Error occurred While fetching Admin access token: ' + JSON.stringify(res));
+          }
+      })
+      .catch(error => {
+          console.log('[FE]Storeportal.js :: Error While fetching Admin access token: ' + error);
+          window.location.href = `${process.env.REACT_APP_STOREFRONT_URL}/errorpage`;
+      });
+    
   }
 
   async componentDidMount() {
@@ -54,6 +88,7 @@ class OrderConfirmationPage extends React.Component {
           setTimeout(() => {
             this.setState({ order, isLoaded: true });
           }, 3000); // 3 seconds delay
+          this.updateOrderStatus(placeOrderResult.orderNo);
         }
       });
     } else {
@@ -72,8 +107,31 @@ class OrderConfirmationPage extends React.Component {
         Cookies.set("bearerToken", bearerToken, {
           expires: 0,
         });
+        this.updateOrderStatus(placeOrderResult.orderNo);
       }
     }
+  }
+
+  /**
+     * Get admin access token and set it in cookie and token variable
+     */
+  getAdminAuthToken() {
+    const inThirtyMinutes = 1 / 48;
+    axios.get(`${process.env.REACT_APP_API_URL}/get-accesstoken`)
+      .then(res => {
+          if (res.status === 200) {
+              this.setState({ token: res.data });
+              Cookies.set("accessToken", res.data, {
+                  expires: inThirtyMinutes,
+                });
+          } else {
+              console.log('[FE]Storeportal.js :: Error occurred While fetching Admin access token: ' + JSON.stringify(res));
+          }
+      })
+      .catch(error => {
+          console.log('[FE]Storeportal.js :: Error While fetching Admin access token: ' + error);
+          window.location.href = `${process.env.REACT_APP_STOREFRONT_URL}/errorpage`;
+      });
   }
 
   render() {
