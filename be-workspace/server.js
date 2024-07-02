@@ -13,6 +13,7 @@ app.use(require('./routes/authTokenRoutes'));
 app.use(require('./routes/StorePortal'));
 app.use(require('./routes/accesstoken/adminApiToken'));
 app.use(require('./routes/coupon'));
+app.use(require('./routes/storeRoutes'));
 
 /* CORS for Cross Site origin requests. */
 const cors = require('cors');

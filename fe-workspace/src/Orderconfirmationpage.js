@@ -104,8 +104,9 @@ class OrderConfirmationPage extends React.Component {
           this.setState({ order, isLoaded: true });
         }, 3000); // 3 seconds delay
         sessionStorage.removeItem("basketData");
-        Cookies.set("bearerToken", bearerToken, {
-          expires: 0,
+        const allCookies = Cookies.get(); // Get all cookies
+        Object.keys(allCookies).forEach(cookieName => {
+          Cookies.set(cookieName, allCookies[cookieName], { expires: 0 });
         });
         this.updateOrderStatus(placeOrderResult.orderNo);
       }
