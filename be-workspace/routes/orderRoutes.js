@@ -1,5 +1,19 @@
 var express = require('express');
 var router = express.Router();
+const bodyParser = require("body-parser");
+
+/** bodyParser.urlencoded(options)
+ * Parses the text as URL encoded data (which is how browsers tend to send form data from regular forms set to POST)
+ * and exposes the resulting object (containing the keys and values) on req.body
+ */
+router.use(bodyParser.urlencoded({
+    extended: true 
+}));
+
+/**bodyParser.json(options)
+ * Parses the text as JSON and exposes the resulting object on req.body.
+ */
+router.use(bodyParser.json());
 
 // import Packages from "commerce-sdk" | Configurations to use while creating API Clients
 const {Checkout,Product} = require("commerce-sdk");
@@ -14,12 +28,36 @@ function createOrderFromBasket (basketID, headerToken) {
             config1.headers["authorization"] = headerToken;
             // Create a new ShopperOrders API client
             const shopperOrdersClient = new Checkout.ShopperOrders(config1);
-            const orderResult = shopperOrdersClient. createOrder({
+            const orderResult = shopperOrdersClient.createOrder({
                 body: {
                     "basketId": basketID
                 }
             });
             resolve(orderResult);
+        } catch(e) {
+            reject(e);
+        }
+    });
+}
+
+//The below function updates the Order Status with the specified status value
+function updateOrderStatus (orderID, newStatus, headerToken) {
+    return new Promise(async function(resolve, reject){
+
+        try {
+            config1.headers["authorization"] = headerToken;
+            // Create a new Orders API client
+            const shopperOrdersClient = new Checkout.Orders(config1);
+            const orderStatusUpdateResult = shopperOrdersClient.updateOrderStatus({
+                body: {
+                    "status": newStatus
+                },
+                parameters: { 
+                    orderNo: orderID
+                }
+            });
+
+            resolve(orderStatusUpdateResult);
         } catch(e) {
             reject(e);
         }
@@ -41,6 +79,14 @@ router.get('/createorder/:basketId', function(req, res) {
     }).catch(function(err) {
         console.log(err);
     });
+});
+
+ // The below route is for updating the order status
+ router.post('/updatestatus/:orderNo', function(req, res) {
+    var orderNo = req.params.orderNo;
+    var token = req.headers.authorization;
+    
+    updateOrderStatus(orderNo, 'new', token);
 });
 
 module.exports = router;

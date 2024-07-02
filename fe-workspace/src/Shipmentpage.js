@@ -405,13 +405,11 @@ class Shipmentpage extends React.Component {
                 <div className="alert alert-info">
                   <div className="badge-warning mb-3">
                     <span className="fa fa-lg fa-exclamation-triangle"></span>{" "}
-                    IN-STORE PICKUP NOT AVAILABLE
+                    BOPIS - BUY ONLINE PICKUP IN STORE
                   </div>
                   <div className="border border-secondary p-2 rounded">
                     <p>
-                      We regret to inform you that instore pickup is not
-                      available in your area. Enter your address to get your
-                      order at your doorstep.
+                      Thank you for choosing pickup in store and contributing to our sustainable commerce movement.
                     </p>
                   </div>
                 </div>
