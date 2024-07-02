@@ -10918,3 +10918,19 @@ img.img-responsive.cartimg {
   color: #fff;
   font-size: 1.5rem;
 }
+
+
+.store-selected-popup {
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #4caf50;
+  color: white;
+  padding: 15px;
+  border-radius: 5px;
+  z-index: 1000;
+  font-size: 16px;
+  text-align: center;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}

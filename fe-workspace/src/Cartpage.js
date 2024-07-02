@@ -14,10 +14,11 @@ class Cartpage extends React.Component {
     this.state = {
       basket: [],
       productItemsArr: [],
-      storeResult:[],
-			submitted: false,
-			zipCode: '',
-      showPopup: true, // Control the visibility of the popup
+      storeResult: [],
+      submitted: false,
+      zipCode: '',
+      showPopup: true, // Control the visibility of the store selection popup
+      showStoreSelectedPopup: false, // Control the visibility of the store selected popup
     };
   }
 
@@ -26,58 +27,57 @@ class Cartpage extends React.Component {
     return item.imgUrl;
   };
 
-  handleZipCode = (event) =>{
+  handleZipCode = (event) => {
     this.setState({
-        zipCode:event.target.value
-    })
+      zipCode: event.target.value
+    });
   }
 
-  handleSubmission = (event) =>{
-      event.preventDefault();
-      var params = {
-        zip: this.state.zipCode,
-      };
-      console.log("Inside Store");
-      this.setState({ submitted:true});
-      axios.get(`http://localhost:8080/store`, {
-          params:params,
-          headers: this.state.headers
-      })
+  handleSubmission = (event) => {
+    event.preventDefault();
+    var params = {
+      zip: this.state.zipCode,
+    };
+    console.log("Inside Store");
+    this.setState({ submitted: true });
+    axios.get(`${process.env.REACT_APP_API_URL}/store`, {
+      params: params,
+      headers: this.state.headers
+    })
       .then(res => {
-          console.log("Store Info--------", res);
-          if (res.data === '404 Not Found') {
-              this.initializeState('Store Not Found!', false, null);
-          } else if (res.data && res.data.data) {
-              const storeResult = res.data.data;
-              this.setState({storeResult});
-              this.initializeState('Stores Found', true, storeResult);
-          } else {
-              this.initializeState('Store Not Found!', false, null);
-          }
+        if (res.data === '404 Not Found') {
+          this.initializeState('Store Not Found!', false, null);
+        } else if (res.data && res.data.data) {
+          const storeResult = res.data.data;
+          this.setState({ storeResult });
+          this.initializeState('Stores Found', true, storeResult);
+        } else {
+          this.initializeState('Store Not Found!', false, null);
+        }
       })
-        .catch(err => {
-          if (err.response && err.response.status === 404) {
-              this.initializeState('Store Not Found!', false, null);
-          } else {
-              this.initializeState('Error occurred: ' + err.message, false, null);
-          }
-      })
+      .catch(err => {
+        if (err.response && err.response.status === 404) {
+          this.initializeState('Store Not Found!', false, null);
+        } else {
+          this.initializeState('Error occurred: ' + err.message, false, null);
+        }
+      });
   }
 
   initializeState = (msg, storeFound, storeResult) => {
-      this.setState({
-          msg: msg,
-          storeFound: storeFound,
-          storeResult: storeResult
-      });
+    this.setState({
+      msg: msg,
+      storeFound: storeFound,
+      storeResult: storeResult
+    });
   };
 
-  handleAddStore = (event) =>{
-  console.log("Values1", Cookies.get('storeId'));
-  const storeId = event.currentTarget.getAttribute("value1");
-  const storeName = event.currentTarget.getAttribute("value2");
-  const storeAddress = event.currentTarget.getAttribute("value3");
-  const storeCity = event.currentTarget.getAttribute("value4");
+  handleAddStore = (event) => {
+    console.log("Values1", Cookies.get('storeId'));
+    const storeId = event.currentTarget.getAttribute("value1");
+    const storeName = event.currentTarget.getAttribute("value2");
+    const storeAddress = event.currentTarget.getAttribute("value3");
+    const storeCity = event.currentTarget.getAttribute("value4");
     Cookies.set('storeId', storeId, {
       expires: inThirtyMinutes,
     });
@@ -90,7 +90,10 @@ class Cartpage extends React.Component {
     Cookies.set('storeCity', storeCity, {
       expires: inThirtyMinutes,
     });
-    
+    this.setState({ showStoreSelectedPopup: true }); // Show store selected popup
+    setTimeout(() => {
+      this.setState({ showStoreSelectedPopup: false });
+    }, 2000); // Hide the popup after 2 seconds
   }
 
   async fetchCartInfo(headers) {
@@ -162,7 +165,7 @@ class Cartpage extends React.Component {
   };
 
   render() {
-    const { basket, productItemsArr, showPopup } = this.state;
+    const { basket, productItemsArr, showPopup, showStoreSelectedPopup } = this.state;
     const basketData = sessionStorage.getItem("basketData")
       ? JSON.parse(sessionStorage.getItem("basketData"))
       : "";
@@ -184,11 +187,17 @@ class Cartpage extends React.Component {
               <div className="bopis-message">
                 <div className="bopis-text">
                   Opt for BOPIS - Pick-up in Store and use any green mode of transportation to avail exciting offers at the Pick-up Counter.
-                  <br/><br/><br/>
-                  <i class="fa-solid fa-charging-station fa-5x"></i> or <i class="fa-solid fa-person-biking fa-5x"></i> or <i class="fa-solid fa-bus fa-5x"></i>
+                  <br /><br /><br />
+                  <i className="fa-solid fa-charging-station fa-5x"></i> or <i className="fa-solid fa-person-biking fa-5x"></i> or <i className="fa-solid fa-bus fa-5x"></i>
                 </div>
               </div>
             </div>
+          </div>
+        )}
+
+        {showStoreSelectedPopup && (
+          <div className="store-selected-popup">
+            Store has been selected successfully!
           </div>
         )}
 
@@ -249,60 +258,60 @@ class Cartpage extends React.Component {
                       BOPIS - PICKUP IN STORE
                     </p>
                     <br />
-                    
+
                     {Cookies.get('storeId') === undefined ? (submitted && storeFound ? (
-                        <div class="row">
-                        <section class="py-5 bg-light">
-                        <div class="container px-4 px-lg-5 mt-5">
-                        <h5 class = "fw-bolder mb-4"> Store Details</h5>
-                        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-xl-4">
-                          { this.state.storeResult.map(store =>
-                            <div class="col col-lg-8" key={store.storeid}>
-                            <div class="col-12">
-                              <span>Store Name : {store.name}</span><br />
-                              <span>Store Address : {store.address1}</span><br />
-                              <span>Store City : {store.city}</span><br />
-                            </div>
-                            <button class="btn btn-primary mt-2 flex-shrink-0" type="button" onClick={this.handleAddStore} value1 = {store.id} value2 = {store.name} value3 = {store.address1} value4 = {store.city}>
-                                  Select Store
-                                </button>
-                          </div>
-                          )}
-                        </div>
-                      </div>
-                    </section>
-                  </div>): (
-                          <form onSubmit={this.handleSubmission}>
-                          <div class="form-group">
-                            <div class="col-lg-8 col-sm-8">
-                              <p>Enter Zip Code to Select Store</p>
-                              <input class="form-control mb-4" placeholder="Zip Code" type="text" name ="zipCode" value={this.state.zipCode} onChange={this.handleZipCode}/>
-                            </div>
-                          </div>
-                          <div class="row mb-4">
-                          <div>
-                            <button type="submit" class="btn btn-primary mt-2">Submit</button>
-                          </div>
-                          </div>
-                          {!storeFound && submitted? (
-                          <div class="col-12">
-                            <span>Store Not Found. Please try again.</span><br />
-                            </div>
-                              ) : (
-                              <div class="col-12">
-                            <span>It will dispaly store details for the provided zip code</span><br />
-                            </div>
+                      <div className="row">
+                        <section className="py-5 bg-light">
+                          <div className="container px-4 px-lg-5 mt-5">
+                            <h5 className="fw-bolder mb-4">Store Details</h5>
+                            <div className="row">
+                              {this.state.storeResult.map(store =>
+                                <div className="col col-lg-8" key={store.storeid}>
+                                  <div className="col-12">
+                                    <span>Store Name : {store.name}</span><br />
+                                    <span>Store Address : {store.address1}</span><br />
+                                    <span>Store City : {store.city}</span><br />
+                                  </div>
+                                  <button className="btn btn-primary mt-2 flex-shrink-0" type="button" onClick={this.handleAddStore} value1={store.id} value2={store.name} value3={store.address1} value4={store.city}>
+                                    Select Store
+                                  </button>
+                                </div>
                               )}
-                        </form>)) : (
-                          <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-xl-4">
-                            <div class="col col-lg-8" >
-                            <div class="col-12">
-                              <span>Store Name : {Cookies.get('storeId')}</span><br />
-                              <span>Store Address : {Cookies.get('storeAddress')}</span><br />
-                              <span>Store City : {Cookies.get('storeCity')}</span><br />
                             </div>
                           </div>
-                        </div>)}
+                        </section>
+                      </div>) : (
+                        <form onSubmit={this.handleSubmission}>
+                          <div className="form-group">
+                            <div className="col-lg-8 col-sm-8">
+                              <p>Enter Zip Code to Select Store</p>
+                              <input className="form-control mb-4" placeholder="Zip Code" type="text" name="zipCode" value={this.state.zipCode} onChange={this.handleZipCode} />
+                            </div>
+                          </div>
+                          <div className="row mb-4">
+                            <div>
+                              <button type="submit" className="btn btn-primary mt-2">Submit</button>
+                            </div>
+                          </div>
+                          {!storeFound && submitted ? (
+                            <div className="col-12">
+                              <span>Store Not Found. Please try again.</span><br />
+                            </div>
+                          ) : (
+                            <div className="col-12">
+                              <span>It will display store details for the provided zip code</span><br />
+                            </div>
+                          )}
+                        </form>)) : (
+                      <div className="row gx-4 gx-lg-5 row-cols-2 row-cols-xl-4">
+                        <div className="col col-lg-8" >
+                          <div className="col-12">
+                            <span>Store Name : {Cookies.get('storeName')}</span><br />
+                            <span>Store Address : {Cookies.get('storeAddress')}</span><br />
+                            <span>Store City : {Cookies.get('storeCity')}</span><br />
+                          </div>
+                        </div>
+                      </div>)}
                   </div>
                 </div>
                 <div className="col-lg-12 col-sm-12">
