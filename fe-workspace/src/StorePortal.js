@@ -42,7 +42,7 @@ class StorePortal extends React.Component {
     }
 
     getAdminAuthToken() {
-        axios.get(`http://localhost:8080/get-accesstoken`)
+        axios.get(`${process.env.REACT_APP_API_URL}/get-accesstoken`)
             .then(res => {
                 console.log('[FE]Storeportal.js :: Admin Token Response: ' + JSON.stringify(res));
                 if (res.status === 200) {
@@ -54,7 +54,7 @@ class StorePortal extends React.Component {
             })
             .catch(error => {
                 console.log('[FE]Storeportal.js :: Error While fetching Admin access token: ' + error);
-                window.location.href = "http://localhost:3000/errorpage";
+                window.location.href = `${process.env.REACT_APP_STOREFRONT_URL}/errorpage`;
             });
     }
 
@@ -65,7 +65,7 @@ class StorePortal extends React.Component {
         if (!cookieTokenValue) {
             this.getAdminAuthToken();
         }
-        axios.post(`http://localhost:8080/getOrder`, {
+        axios.post(`${process.env.REACT_APP_API_URL}/getOrder`, {
             body: {
                 orderNo: this.state.orderNo,
                 token: 'Bearer ' + this.state.token
@@ -119,8 +119,7 @@ class StorePortal extends React.Component {
         const { msg, orderObj, orderFound, loading } = this.state;
 
         const billingObj = orderFound && orderObj && orderObj.billingAddress;
-        const productLineItem = orderFound && orderObj && orderObj.productItems[0];
-        const shipmentObj = orderFound && orderObj && orderObj.shipments[0] && orderObj.shipments[0].shippingAddress;
+        const productLineItems = orderFound && orderObj && orderObj.productItems;
 
         return (
             <div className="store-portal">
@@ -155,51 +154,61 @@ class StorePortal extends React.Component {
                                 <div className="order-details">
                                     {orderFound && orderObj ? (
                                         <div>
-
-                                            <div class="row justify-content-center">
-                                                <div class="col info-box rounded col-lg-10 col-xl-8 bg-light p-4 m-3 ">
-                                                    <div class="row ">
-                                                        <div class="col-12 col-sm-2 d-flex justify-content-center align-items-center mb-2 mb-sm-0 display-3 text-primary">
-                                                            <i class="fa fa-check"></i>
+                                            <div className="row justify-content-center">
+                                                <div className="col info-box rounded col-lg-10 col-xl-8 bg-light p-4 m-3 ">
+                                                    <div className="row">
+                                                        <div className="col-12 col-sm-2 d-flex justify-content-center align-items-center mb-2 mb-sm-0 display-3 text-primary">
+                                                            <i className="fa fa-check"></i>
                                                         </div>
-                                                        <div class="col-12 col-sm-10 pl-sm-0 mb-2">
-                                                            <div class="col-md-12">
-                                                                <div class="panel panel-info">
-                                                                    <div class="panel-heading">
-                                                                        <h4 class="text-center">
+                                                        <div className="col-12 col-sm-10 pl-sm-0 mb-2">
+                                                            <div className="col-md-12">
+                                                                <div className="panel panel-info">
+                                                                    <div className="panel-heading">
+                                                                        <h4 className="text-center">
                                                                         VALID ORDER - {orderObj.orderNo}</h4>
                                                                     </div>
-                                                                    <div class="panel-body">
-                                                                        <p class="lead">
+                                                                    <div className="panel-body">
+                                                                        <p className="lead">
                                                                             <strong>Order Total: {orderObj.orderTotal}</strong><br/>
                                                                             Shipping Total: {orderObj.shippingTotal}
-                                                                            </p>
+                                                                        </p>
                                                                     </div>
-                                                                    <ul class="list-group list-group-flush">
-                                                                        <li class="list-group-item">Product Name: {productLineItem.productName}</li>
-                                                                        <li class="list-group-item">Quantity: {productLineItem.quantity}</li>
-                                                                    </ul>
-                                                                    <hr/>
-                                                                    <ul class="list-group list-group-flush">
-                                                                        <li class="list-group-item">Full Name: {billingObj.fullName}</li>
-                                                                        <li class="list-group-item">Address: {billingObj.address1}</li>
-                                                                        <li class="list-group-item">Postal Code: {billingObj.postalCode}</li>
-                                                                        <li class="list-group-item">State Code: {billingObj.stateCode}</li>
-                                                                        <li class="list-group-item">Country Code: {billingObj.countryCode}</li>
+                                                                    <table className="table">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>Product Name</th>
+                                                                                <th>Quantity</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            {productLineItems && productLineItems.map((productLineItem, index) => (
+                                                                                <tr key={index}>
+                                                                                    <td>{productLineItem.productName}</td>
+                                                                                    <td>{productLineItem.quantity}</td>
+                                                                                </tr>
+                                                                            ))}
+                                                                        </tbody>
+                                                                    </table>
+                                                                    <ul className="list-group list-group-flush">
+                                                                        <li className="list-group-item">Full Name: {billingObj.fullName}</li>
+                                                                        <li className="list-group-item">Address: {billingObj.address1}</li>
+                                                                        <li className="list-group-item">Postal Code: {billingObj.postalCode}</li>
+                                                                        <li className="list-group-item">State Code: {billingObj.stateCode}</li>
+                                                                        <li className="list-group-item">Country Code: {billingObj.countryCode}</li>
                                                                     </ul>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="alert alert-success mt-2" role="alert">
+                                                    <div className="alert alert-success mt-2" role="alert">
                                                         <p>The customer's order can be handed over to him/her. <br/>
-                                                        If the customer has used a green mode of transportationm let him/her choose from the following options to get a discount coupon for his next order.</p>
+                                                        If the customer has used a green mode of transportation, let him/her choose from the following options to get a discount coupon for his next order.</p>
                                                     </div>
-                                                    <div class="row">
+                                                    <div className="row">
                                                         <div className="btn-group mt-4">
-                                                            <Link to="/spinwheel" className="btn btn-warning"><i class="fa-solid fa-spinner"></i> Spin Wheel Game</Link>
-                                                            <Link to="/scanqr" className="btn btn-success"><i class="fa-solid fa-qrcode"></i> Scan Bus QR</Link>
-                                                            <Link to="/squatsgame" className="btn btn-danger"><i class="fa-solid fa-person-walking"></i> 10 Squats Challenge</Link>
+                                                            <Link to="/spinwheel" className="btn btn-warning"><i className="fa-solid fa-spinner"></i> Spin Wheel Game</Link>
+                                                            <Link to="/scanqr" className="btn btn-success"><i className="fa-solid fa-qrcode"></i> Scan Bus QR</Link>
+                                                            <Link to="/squatsgame" className="btn btn-danger"><i className="fa-solid fa-person-walking"></i> 10 Squats Challenge</Link>
                                                         </div>
                                                     </div>
                                                 </div>

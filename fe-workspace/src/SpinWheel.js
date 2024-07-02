@@ -45,7 +45,7 @@ class SpinWheel extends Component {
    * Redirects to error page if fetching token fails.
    */
   getAdminAuthToken() {
-    axios.get(`http://localhost:8080/get-accesstoken`)
+    axios.get(`${process.env.REACT_APP_API_URL}/get-accesstoken`)
         .then(res => {
             console.log('[FE]SpinWheel.js :: Admin Token Response: ' + JSON.stringify(res));
             if (res.status === 200) {
@@ -61,7 +61,7 @@ class SpinWheel extends Component {
         .catch(error => {
             console.log('[FE]SpinWheel.js :: Error While fetching Admin access token: ' + error);
             // Redirect to error page if fetching token fails
-            window.location.href = "http://localhost:3000/errorpage";
+            window.location.href = `${process.env.REACT_APP_STOREFRONT_URL}/errorpage`;
         });
   }
 
@@ -97,7 +97,7 @@ class SpinWheel extends Component {
     });
     const discount = data[prizeNumber].value;  // Get discount value from selected prize
     try {
-      const res = await axios.post('http://localhost:8080/updateCouponCodes', {
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/updateCouponCodes`, {
         accessToken, discount  // Send access token and discount value to backend
       });
       if (res.data.couponCode) {
