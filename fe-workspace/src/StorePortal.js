@@ -3,13 +3,11 @@ import axios from 'axios';
 import Cookies from "js-cookie";
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
+import './StorePortal.css'; // Import the custom CSS file
 
 const inThirtyMinutes = 1 / 48;
 const cookieName = 'accessToken';
 
-/**
- * Component for managing and displaying store portal functionality.
- */
 class StorePortal extends React.Component {
 
     constructor(props) {
@@ -25,48 +23,31 @@ class StorePortal extends React.Component {
         };
     }
 
-    /**
-     * Alert user of winning in spin wheel.
-     */
     handleSpinWheel = () => {
         alert('Congrats you are a lucky customer !!');
     };
 
-    /**
-     * Alert user of not winning in squart.
-     */
     handleSquart = (event) => {
         event.preventDefault();
         alert('Better Luck Next Time !!');
     };
 
-    /**
-     * Alert user of not winning in qr scan.
-     */
     handleQrScan = (event) => {
         event.preventDefault();
         alert('Better Luck Next Time !!');
     };
 
-    /**
-     * Fetches admin access token on component mount.
-     */
     componentDidMount() {
         this.getAdminAuthToken();
     }
 
-    /**
-     * Get admin access token and set it in cookie and token vriable
-     */
     getAdminAuthToken() {
         axios.get(`http://localhost:8080/get-accesstoken`)
             .then(res => {
                 console.log('[FE]Storeportal.js :: Admin Token Response: ' + JSON.stringify(res));
                 if (res.status === 200) {
                     this.setState({ token: res.data });
-                    Cookies.set(cookieName, res.data, {
-                        expires: inThirtyMinutes,
-                      });
+                    Cookies.set(cookieName, res.data, { expires: inThirtyMinutes });
                 } else {
                     console.log('[FE]Storeportal.js :: Error occurred While fetching Admin access token: ' + JSON.stringify(res));
                 }
@@ -77,9 +58,6 @@ class StorePortal extends React.Component {
             });
     }
 
-    /**
-     * Handles form submission to retrieve order details.
-     */
     handleSubmission = (event) => {
         event.preventDefault();
         this.setState({ loading: true });
@@ -121,9 +99,6 @@ class StorePortal extends React.Component {
             });
     };
 
-    /**
-     * Initializes component state based on API response.
-     */
     initializeState = (msg, orderFound, orderObj) => {
         this.setState({
             msg: msg,
@@ -132,163 +107,113 @@ class StorePortal extends React.Component {
         });
     };
 
-    /**
-     * Updates state with order number input value.
-     */
     handleOrderNo = (event) => {
         this.setState({ orderNo: event.target.value });
     };
 
-    /**
-     * Updates state with postalCode input value.
-     */
     handlePostalCode = (event) => {
         this.setState({ postalCode: event.target.value });
     };
 
-    /**
-     * Renders the StorePortal component.
-     */
     render() {
         const { msg, orderObj, orderFound, loading } = this.state;
 
-        // Extracting data for display if order is found
         const billingObj = orderFound && orderObj && orderObj.billingAddress;
         const productLineItem = orderFound && orderObj && orderObj.productItems[0];
         const shipmentObj = orderFound && orderObj && orderObj.shipments[0] && orderObj.shipments[0].shippingAddress;
 
         return (
-            <div>
+            <div className="store-portal">
                 <Helmet>
-                    <title>Store Portal</title>
+                    <title>Delivery Centre - Store Portal</title>
                     <meta name="theme-color" content="#ccc" />
                 </Helmet>
-                <section className="1">
-                    <div className="container px-4 px-lg-5 my-5">
+                <section className="section">
+                    <div className="container">
                         <div className="jumbotron">
-                            <h1 className="display-7">Welcome to Store Portal</h1>
+                            <h1 className="display-4">Delivery Centre - Store Portal</h1>
                             <hr className="my-4" />
-                            <p>Please enter order details.</p>
+                            <p>Please enter the order number and the associated zip code to fetch the details of the order: </p>
                             <form onSubmit={this.handleSubmission}>
                                 <fieldset>
                                     <div className="form-group">
-                                        <label className="col-sm-3 control-label" htmlFor="orderno">Order Number</label>
-                                        <div className="col-sm-3">
-                                            <input type="text" className="form-control" name="orderno" id="orderid" placeholder="Order Number" required value={this.state.orderNo} onChange={this.handleOrderNo} />
-                                        </div>
+                                        <label htmlFor="orderno">Order Number</label>
+                                        <input type="text" className="form-control" name="orderno" id="orderid" placeholder="Order Number" required value={this.state.orderNo} onChange={this.handleOrderNo} />
                                     </div>
                                     <div className="form-group">
-                                        <label className="col-sm-3 control-label" htmlFor="postalCode">Postal Code</label>
-                                        <div className="col-sm-3">
-                                            <input type="text" className="form-control" name="postalCode" id="postalCode" placeholder="Postal Code" required value={this.state.postalCode} onChange={this.handlePostalCode} />
-                                        </div>
+                                        <label htmlFor="postalCode">Postal Code</label>
+                                        <input type="text" className="form-control" name="postalCode" id="postalCode" placeholder="Postal Code" required value={this.state.postalCode} onChange={this.handlePostalCode} />
                                     </div>
-                                    <div className="form-group" style={{ marginTop: '20px'}}>
-                                        <div className="col-sm-offset-3 col-sm-9">
-                                            <button type="submit" className="btn btn-success">Search</button>
-                                        </div>
-                                    </div>
+                                    <button type="submit" className="btn btn-primary btn-block">Search</button>
                                 </fieldset>
                             </form>
                             {loading ? (
-                                <div className="spinner-border" role="status" style={{ marginTop: '20px', marginBottom: '20px' }}>
+                                <div className="spinner-border text-primary" role="status">
                                     <span className="sr-only">Loading...</span>
                                 </div>
                             ) : (
-                                <div style={{ marginTop: '20px', fontSize: '18px' }}>
+                                <div className="order-details">
                                     {orderFound && orderObj ? (
                                         <div>
-                                            <div className="order-text row">
-                                                <div className="col-12">
-                                                    <h5> Order Details</h5>
-                                                    <span>Order No : {orderObj.orderNo}</span><br />
-                                                    <span> Order Total : {orderObj.orderTotal} </span> <br />
-                                                    <span>Shipping Total : {(orderObj.shippingTotal)} </span>
-                                                </div>
-                                            </div>
-                                            <hr />
-                                            <div className="customer-text row">
-                                                <div className="col-12">
-                                                    <h5> Customer Details</h5>
-                                                    { orderObj.customerInfo && orderObj.customerInfo.email ? (
-                                                        <div>
-                                                            <span>Customer Type: </span><span style={{ color: 'purple' }}>Registered</span><br />
-                                                            <span>Customer No : {orderObj.customerInfo && orderObj.customerInfo.customerNo}</span><br />
-                                                            <span>Email : {(orderObj.customerInfo && orderObj.customerInfo.email)} </span><br />
+
+                                            <div class="row justify-content-center">
+                                                <div class="col info-box rounded col-lg-10 col-xl-8 bg-light p-4 m-3 ">
+                                                    <div class="row ">
+                                                        <div class="col-12 col-sm-2 d-flex justify-content-center align-items-center mb-2 mb-sm-0 display-3 text-primary">
+                                                            <i class="fa fa-check"></i>
                                                         </div>
-                                                    ) : (
-                                                        <div>
-                                                            <span>Customer Type: </span><span style={{ color: 'purple' }}>Guest</span><br />
-                                                            <span>Customer Name : {orderObj.customerInfo && orderObj.customerInfo.customerName} </span> <br />
+                                                        <div class="col-12 col-sm-10 pl-sm-0 mb-2">
+                                                            <div class="col-md-12">
+                                                                <div class="panel panel-info">
+                                                                    <div class="panel-heading">
+                                                                        <h4 class="text-center">
+                                                                        VALID ORDER - {orderObj.orderNo}</h4>
+                                                                    </div>
+                                                                    <div class="panel-body">
+                                                                        <p class="lead">
+                                                                            <strong>Order Total: {orderObj.orderTotal}</strong><br/>
+                                                                            Shipping Total: {orderObj.shippingTotal}
+                                                                            </p>
+                                                                    </div>
+                                                                    <ul class="list-group list-group-flush">
+                                                                        <li class="list-group-item">Product Name: {productLineItem.productName}</li>
+                                                                        <li class="list-group-item">Quantity: {productLineItem.quantity}</li>
+                                                                    </ul>
+                                                                    <hr/>
+                                                                    <ul class="list-group list-group-flush">
+                                                                        <li class="list-group-item">Full Name: {billingObj.fullName}</li>
+                                                                        <li class="list-group-item">Address: {billingObj.address1}</li>
+                                                                        <li class="list-group-item">Postal Code: {billingObj.postalCode}</li>
+                                                                        <li class="list-group-item">State Code: {billingObj.stateCode}</li>
+                                                                        <li class="list-group-item">Country Code: {billingObj.countryCode}</li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                    )}
-                                                    <span>Customer Name : {orderObj.customerInfo && orderObj.customerInfo.customerName} </span> <br />
-                                                </div>
-                                            </div>
-                                            <hr />
-                                            <div className="product-info row">
-                                                <div className="col">
-                                                    <h5>Product Details</h5>
-                                                    <span>Product Name: {(productLineItem.productName)}</span><br />
-                                                    <span>Product ID: {(productLineItem.productId)} </span> <br />
-                                                    <span>Price: {(productLineItem.price)} </span><br />
-                                                    <span>Quantity : {(productLineItem.quantity)} </span>
-                                                </div>
-                                            </div>
-                                            <hr />
-                                            <div className="row">
-                                                <div className="col">
-                                                    <h5>Shipping Details</h5>
-                                                    <span>Full Name: {shipmentObj.fullName}</span><br />
-                                                    <span>Address: {shipmentObj.address1}</span><br />
-                                                    <span>Postal Code: {shipmentObj.postalCode}</span><br />
-                                                    <span>City: {shipmentObj.city}</span><br />
-                                                    <span>State Code: {shipmentObj.stateCode}</span><br />
-                                                    <span>Country Code: {shipmentObj.countryCode}</span>
-                                                </div>
-                                                <div className="col">
-                                                    <h5>Billing Details</h5>
-                                                    <span>Full Name: {billingObj.fullName}</span><br />
-                                                    <span>Address: {billingObj.address1}</span><br />
-                                                    <span>Postal Code: {billingObj.postalCode}</span><br />
-                                                    <span>City: {billingObj.city}</span><br />
-                                                    <span>State Code: {billingObj.stateCode}</span><br />
-                                                    <span>Country Code: {billingObj.countryCode}</span>
-                                                </div>
-                                            </div>
-                                            <br />
-                                            <hr />
-                                            <div className="row">
-                                                <div className="col-sm-4">
-                                                    <Link to="/spinwheel">
-                                                        <button className="btn btn-primary btn-sm" onClick={this.handleSpinWheel}>Go to Spin Wheel</button>
-                                                    </Link>
-                                                </div>
-                                                <div className="col-sm-4">
-                                                    <Link to="/spinwheel">
-                                                        <button className="btn btn-primary btn-sm" onClick={this.handleQrScan}>Scan Vehicle QR</button>
-                                                    </Link>
-                                                </div>
-                                                <div className="col-sm-4">
-                                                    <Link to="/spinwheel">
-                                                        <button className="btn btn-primary btn-sm" onClick={this.handleSquart}>Go to Squart</button>
-                                                    </Link>
+                                                    </div>
+                                                    <div class="alert alert-success mt-2" role="alert">
+                                                        <p>The customer's order can be handed over to him/her. <br/>
+                                                        If the customer has used a green mode of transportationm let him/her choose from the following options to get a discount coupon for his next order.</p>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div className="btn-group mt-4">
+                                                            <Link to="/spinwheel" className="btn btn-warning"><i class="fa-solid fa-spinner"></i> Spin Wheel Game</Link>
+                                                            <Link to="/scanqr" className="btn btn-success"><i class="fa-solid fa-qrcode"></i> Scan Bus QR</Link>
+                                                            <Link to="/squatsgame" className="btn btn-danger"><i class="fa-solid fa-person-walking"></i> 10 Squats Challenge</Link>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     ) : msg ? (
-                                        <div className="alert alert-danger">
+                                        <div className="alert alert-danger mt-4">
                                             <strong>{msg}</strong> Please try again.
                                         </div>
                                     ) : (
-                                        <p>Click "Search" to retrieve data.</p>
+                                        <p className="mt-4">Click "Search" to retrieve data.</p>
                                     )}
                                 </div>
                             )}
-                            <br />
-                            <p className="lead">
-                                <a className="btn btn-primary btn-sm" href="/" role="button">Navigate to Storefront</a>
-                            </p>
                         </div>
                     </div>
                 </section>

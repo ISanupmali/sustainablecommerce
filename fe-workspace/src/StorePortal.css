@@ -1,0 +1,73 @@
+.store-portal {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.section {
+  width: 100%;
+  max-width: 1200px;
+}
+
+.jumbotron {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.display-4 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+.form-container,
+.results-container {
+  width: 100%;
+}
+
+.form-container {
+  margin-bottom: 20px;
+}
+
+.results-container {
+  margin-top: 20px;
+}
+
+.results-container h5 {
+  font-size: 1.25rem;
+  margin-bottom: 10px;
+}
+
+.results-container p {
+  margin-bottom: 5px;
+}
+
+.form-group label {
+  font-weight: bold;
+}
+
+.btn-group .btn {
+  margin-right: 10px;
+}
+
+.spinner-border {
+  display: block;
+  margin: 20px auto;
+}
+
+.flex-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.flex-container .form-container {
+  flex: 0 0 48%;
+}
+
+.flex-container .results-container {
+  flex: 0 0 48%;
+}
