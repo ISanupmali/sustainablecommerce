@@ -10934,3 +10934,58 @@ img.img-responsive.cartimg {
   text-align: center;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
+
+.custom-search-box {
+  width: 100%;
+  align-items: center;
+  margin-bottom: 20px; 
+}
+
+.ais-SearchBox-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px 0 0 4px; 
+  font-size: 16px;
+  flex-grow: 1; 
+}
+
+.ais-SearchBox-submit {
+  display:none;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-left: none;
+  border-radius: 0 4px 4px 0; 
+  background-color: #fff;
+}
+
+.ais-SearchBox-reset {
+  display: none; 
+}
+
+.iconimg {
+  width:25px;
+  height:auto;
+}
+
+.bluetext {
+  color: blue;
+  font-weight: bold;
+}
+
+.ais-Hits-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; 
+}
+
+.ais-Hits-item {
+  flex: 0 0 calc(33.33% - 20px); 
+  max-width: calc(33.33% - 20px);
+  margin: 10px; 
+  list-style-type: none;
+}
+
+.ais-Hits {
+  width: 100%;
+}
