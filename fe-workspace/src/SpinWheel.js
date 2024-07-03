@@ -2,6 +2,9 @@ import axios from 'axios';
 import Cookies from "js-cookie";
 import React, { Component } from 'react';
 import { Wheel } from 'react-custom-roulette';
+import Card from 'react-bootstrap/Card';
+import Button from 'react-bootstrap/Button';
+import Alert from 'react-bootstrap/Alert';
 
 // Data for the spinning wheel options
 const data = [
@@ -28,7 +31,8 @@ class SpinWheel extends Component {
       accessToken: null,  // Admin access token retrieved from backend
       couponCode: null,   // Generated coupon code
       error: false,       // Flag to indicate API errors
-      loading: false      // Flag to indicate ongoing API requests
+      loading: false,     // Flag to indicate ongoing API requests
+      wait: false         // Flag to indicate coupon code generation in progress
     };
   }
 
@@ -44,25 +48,25 @@ class SpinWheel extends Component {
    * Sets the access token in state and cookie.
    * Redirects to error page if fetching token fails.
    */
-  getAdminAuthToken() {
+  getAdminAuthToken = () => {
     axios.get(`${process.env.REACT_APP_API_URL}/get-accesstoken`)
-        .then(res => {
-            console.log('[FE]SpinWheel.js :: Admin Token Response: ' + JSON.stringify(res));
-            if (res.status === 200) {
-              // Set accessToken in component state and cookie
-              this.setState({ accessToken: res.data });
-                Cookies.set(cookieName, res.data, {
-                    expires: inThirtyMinutes,
-                  });
-            } else {
-                console.log('[FE]SpinWheel.js :: Error occurred While fetching Admin access token: ' + JSON.stringify(res));
-            }
-        })
-        .catch(error => {
-            console.log('[FE]SpinWheel.js :: Error While fetching Admin access token: ' + error);
-            // Redirect to error page if fetching token fails
-            window.location.href = `${process.env.REACT_APP_STOREFRONT_URL}/errorpage`;
-        });
+      .then(res => {
+        console.log('[FE]SpinWheel.js :: Admin Token Response: ' + JSON.stringify(res));
+        if (res.status === 200) {
+          // Set accessToken in component state and cookie
+          this.setState({ accessToken: res.data });
+          Cookies.set(cookieName, res.data, {
+            expires: inThirtyMinutes,
+          });
+        } else {
+          console.log('[FE]SpinWheel.js :: Error occurred While fetching Admin access token: ' + JSON.stringify(res));
+        }
+      })
+      .catch(error => {
+        console.log('[FE]SpinWheel.js :: Error While fetching Admin access token: ' + error);
+        // Redirect to error page if fetching token fails
+        window.location.href = `${process.env.REACT_APP_STOREFRONT_URL}/errorpage`;
+      });
   }
 
   /**
@@ -79,7 +83,7 @@ class SpinWheel extends Component {
     });
     const token = Cookies.get(cookieName);
     if (!token) {
-        this.getAdminAuthToken(); // Fetch token if not available in cookie
+      this.getAdminAuthToken(); // Fetch token if not available in cookie
     }
   };
 
@@ -91,6 +95,7 @@ class SpinWheel extends Component {
    */
   handleStopSpinning = async () => {
     const { prizeNumber, accessToken } = this.state;
+    this.setState({ wait: true }); // Set wait state for coupon code generation
     this.setState({
       mustSpin: false,  // Stop spinning animation
       finalPrize: data[prizeNumber].option  // Set final prize text
@@ -98,7 +103,8 @@ class SpinWheel extends Component {
     const discount = data[prizeNumber].value;  // Get discount value from selected prize
     try {
       const res = await axios.post(`${process.env.REACT_APP_API_URL}/updateCouponCodes`, {
-        accessToken, discount  // Send access token and discount value to backend
+        accessToken,
+        discount  // Send access token and discount value to backend
       });
       if (res.data.couponCode) {
         this.setState({ couponCode: res.data.couponCode });
@@ -110,6 +116,7 @@ class SpinWheel extends Component {
       this.setState({ error: true });
     } finally {
       this.setState({ loading: false }); // Set loading state to false after API call completes
+      this.setState({ wait: false });   // Reset wait state after coupon code generation completes
     }
   };
 
@@ -126,94 +133,120 @@ class SpinWheel extends Component {
    * Renders the SpinWheel component with spinning wheel and result display.
    */
   render() {
-    const { mustSpin, finalPrize, couponCode, error, loading } = this.state;
+    const { mustSpin, finalPrize, couponCode, error, loading, wait } = this.state;
     return (
-      <div style={styles.container}>
-        {/* Wheel component for spinning animation */}
-        <Wheel
-          mustStartSpinning={mustSpin}
-          prizeNumber={this.state.prizeNumber}
-          data={data}
-          onStopSpinning={this.handleStopSpinning}
-        />
-
-        {/* Render spin button if not spinning */}
-        {!mustSpin && !finalPrize && (
-          <button style={styles.button} onClick={this.handleSpinClick}>SPIN</button>
-        )}
-
-        {/* Render loading spinner during API requests */}
-        {loading ? (
-          <button className="btn btn-primary" type="button" disabled>
-            <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-            Loading...
-          </button>
-        ) : (
-          <div style={{ marginTop: '20px', fontSize: '18px' }}>
-            {/* Render final prize and coupon code if available */}
-            {finalPrize && couponCode ? (
-              <div className="container">
-                <button style={styles.backButton} onClick={this.handleBackClick}>Go Back</button>
-                <div style={styles.result}>Congratulations! You have won {finalPrize} off for your next order</div>
-                <div>An email has been sent to your email address. You can also take a snapshot of the code below for your reference.</div>
-                <div className="alert alert-success" role="alert">
-                  <strong>Coupon Code: </strong>{couponCode}
-                </div>
-              </div>
-            ) : error ? (
-              <div className="container">
-                <button style={styles.backButton} onClick={this.handleBackClick}>Go Back</button>
-                <div className="alert alert-danger" role="alert">
-                  No Coupon Found
-                </div>
-              </div>
-            ) : null}
+      <Card style={styles.card}>
+        <Card.Body style={styles.cardBody}>
+          {/* Wheel component for spinning animation */}
+          <div style={styles.wheelContainer}>
+            <Wheel
+              mustStartSpinning={mustSpin}
+              prizeNumber={this.state.prizeNumber}
+              data={data}
+              onStopSpinning={this.handleStopSpinning}
+              outerBorderColor={'#d3d3d3'}
+              innerBorderColor={'#d3d3d3'}
+              radiusLineColor={'#d3d3d3'}
+              textFontSize={14}
+              textDistance={50}
+              diameter={400} // Adjust diameter to fit larger size
+            />
           </div>
-        )}
-      </div>
+
+          {/* Render spin button if not spinning */}
+          {!mustSpin && !finalPrize && (
+            <Button variant="primary" style={styles.button} onClick={this.handleSpinClick}>SPIN</Button>
+          )}
+
+          {/* Render processing button during API requests */}
+          {loading ? (
+            <div style={styles.processingContainer}>
+              <Button variant="secondary" style={styles.processingButton} disabled>
+                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                {wait ? (
+                  <span style={styles.processingText}>Generating coupon code</span>
+                ) : (
+                  <span style={styles.processingText}>Processing...</span>
+                )}
+              </Button>
+            </div>
+          ) : (
+            <div style={styles.resultContainer}>
+              {/* Render final prize and coupon code if available */}
+              {finalPrize && couponCode ? (
+                <div>
+                  <Button variant="secondary" onClick={this.handleBackClick}>Go Back</Button>
+                  <div style={styles.resultText}>
+                    <strong>Congratulations! You have won {finalPrize} off for your next order</strong>
+                    <br />
+                    An email has been sent to your email address. You can also take a snapshot of the code below for your reference.
+                    <br />
+                    <Alert variant="success">
+                      <strong>Coupon Code: </strong>{couponCode}
+                    </Alert>
+                  </div>
+                </div>
+              ) : error ? (
+                <div>
+                  <Button variant="secondary" onClick={this.handleBackClick}>Go Back</Button>
+                  <Alert variant="danger" style={styles.errorAlert}>No Coupon Found</Alert>
+                </div>
+              ) : null}
+            </div>
+          )}
+        </Card.Body>
+      </Card>
     );
   }
 }
 
-// Styles for different UI elements
+// Styles for the SpinWheel component
 const styles = {
-  container: {
+  card: {
+    width: '520px',
+    margin: 'auto',
+    marginTop: '20px',
+    padding: '20px',
+    overflow: 'hidden',
+    boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.1)' // Box shadow for highlighting
+  },
+  cardBody: {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: '100vh',
-    backgroundColor: '#f0f0f0',
-    padding: '20px'
+    alignItems: 'center'
+  },
+  wheelContainer: {
+    width: '100%',
+    overflow: 'hidden',
+    textAlign: 'center'
   },
   button: {
-    marginTop: '20px',
-    padding: '10px 20px',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    color: '#ffffff',
-    backgroundColor: '#007bff',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer'
+    marginTop: '20px'
   },
-  backButton: {
+  processingContainer: {
     marginTop: '20px',
-    marginBottom: '5px',
-    padding: '10px 20px',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    color: '#ffffff',
-    backgroundColor: '#6c757d',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer'
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
-  result: {
+  processingButton: {
+    display: 'flex',
+    alignItems: 'center'
+  },
+  processingText: {
+    marginLeft: '5px'
+  },
+  resultContainer: {
     marginTop: '20px',
     fontSize: '18px',
-    fontWeight: 'bold',
-    color: '#333'
+    textAlign: 'center',
+    width: '100%'
+  },
+  resultText: {
+    marginTop: '10px'
+  },
+  errorAlert: {
+    marginTop: '10px'
   }
 };
 
