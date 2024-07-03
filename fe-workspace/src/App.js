@@ -6,6 +6,7 @@ import Cookies from "js-cookie";
 import Navbar from "./components/navbar";
 import Footer from "./components/Footer";
 import Herobanner from "./components/home/Herobanner";
+import Testimonials from "./components/home/Testimonials";
 import "./App.css";
 
 class App extends React.Component {
@@ -13,15 +14,16 @@ class App extends React.Component {
     products: [],
     bearerToken: "",
     headers: "",
-    inThirtyMinutes: new Date(new Date().getTime() + 30 * 60 * 1000)
+    inThirtyMinutes: new Date(new Date().getTime() + 30 * 60 * 1000),
   };
 
   async fetchCategoryData1(headers) {
     try {
       const res = await axios.get(
-        `${process.env.REACT_APP_API_URL}/category/dresses`, {
-           headers: headers 
-          }
+        `${process.env.REACT_APP_API_URL}/category/dresses`,
+        {
+          headers: headers,
+        }
       );
       return res.data.hits;
     } catch (error) {
@@ -75,15 +77,25 @@ class App extends React.Component {
           <div className="container px-4 px-lg-5 my-5">
             <div className="row gx-4 gx-lg-5 align-items-center">
               <div className="col-md-12">
-                <Herobanner/>
+                <Herobanner />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="1">
+          <div className="container px-4 px-lg-5 my-5">
+            <div className="row gx-4 gx-lg-5 align-items-center">
+              <div className="col-md-12">
+                <Testimonials />
               </div>
             </div>
           </div>
         </section>
 
         <section className="py-5 bg-light">
-          <div className="container px-4 px-lg-5 mt-5">
-            <h2 className="fw-bolder mb-4">Top Recommendations</h2>
+          <div className="container px-4 px-lg-5 mt-1">
+            <h2 className="fw-bolder mb-4 text-center">Top Recommendations</h2>
             <div className="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
               {this.state.products.map((product) => (
                 <div className="col mb-5" key={product.productId}>

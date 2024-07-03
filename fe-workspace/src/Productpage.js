@@ -7,6 +7,7 @@ import { Helmet } from "react-helmet";
 import Loading from "./components/Loading";
 import Productcarousel from "./components/Productcarousel";
 import Pdpinfo from "./components/Pdpinfo";
+import Youtubevideo from "./components/Youtubevideo";
 
 class Productpage extends React.Component {
   constructor(props) {
@@ -195,7 +196,7 @@ class Productpage extends React.Component {
         </Helmet>
         <Navbar />
 
-        <section className="py-5">
+        <section className="py-5" style={{ minHeight: "500px" }}>
           {this.state.isLoading ? (
             <Loading />
           ) : (
@@ -232,6 +233,8 @@ class Productpage extends React.Component {
                   <Pdpinfo />
                 </div>
               </div>
+
+              <Youtubevideo />
             </div>
           )}
         </section>

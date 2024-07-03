@@ -94,7 +94,7 @@ class Categorypage extends React.Component {
     return (
       <div>
         <Navbar />
-        <section className="py-2 bg-light">
+        <section className="py-2 bg-light" style={{ minHeight: "600px" }}>
           <div className="container px-4 px-lg-5 mt-5">
             <h2 className="fw-bolder mb-4 cattitle text-capitalize">
               {this.props.match.params.id.replace(/-/g, ' ')} Category
