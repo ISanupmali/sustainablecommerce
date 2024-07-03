@@ -4,7 +4,6 @@ import Navbar from "./components/navbar";
 import Footer from "./components/Footer";
 import Cookies from "js-cookie";
 import { Helmet } from "react-helmet";
-import { Card, Container, Row, Col, Table } from 'react-bootstrap';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
@@ -140,8 +139,8 @@ class OrderConfirmationPage extends React.Component {
     const { isLoaded, order } = this.state;
     const shipmentObj = isLoaded && order.shipments[0].shippingAddress;
     const billingObj = isLoaded && order.billingAddress;
-    const productLineItems = isLoaded && order.productItems;
-  
+    const productLineItem = isLoaded && order.productItems[0];
+
     return (
       <div>
         <Helmet>
@@ -149,7 +148,7 @@ class OrderConfirmationPage extends React.Component {
           <meta name="theme-color" content="#ccc" />
         </Helmet>
         <Navbar />
-  
+
         {!isLoaded && (
           <div className="loading-message">
             <div className="loading-text">
@@ -157,111 +156,82 @@ class OrderConfirmationPage extends React.Component {
             </div>
           </div>
         )}
-  
+
         {isLoaded && (
-          <Container className="mt-4 mb-4">
-            <Card className="alert alert-info mb-4">
-              <Card.Body>
-                <Card.Title>
-                  <span className="fa fa-truck"></span> Order Successfully Placed!
-                </Card.Title>
-                <Card.Text>
+          <div className="contashipping-heading container mt-4 mb-4">
+            <div>
+              <h5>
+                <span className="fa fa-truck mb-4"></span> Order Successfully Placed!
+              </h5>
+              <div className="alert alert-info mt-0">
+                <span>
                   <strong>Your Order is on the Way: </strong> You will receive an email shortly with the shipping details and a link for tracking the order.
-                </Card.Text>
-                <blockquote className="blockquote">
-                  Thank you for shopping on Sustainable Commerce, we appreciate it. Hope to see you again soon.
+                </span>
+                <blockquote>
+                  Thank you for shopping on our Demo Site, we appreciate it. Hope to see you again soon.
                 </blockquote>
-              </Card.Body>
-            </Card>
-  
-            <Card className="mb-4">
-              <Card.Body>
-                <Card.Title>Order Details</Card.Title>
-                <Card.Text>
+              </div>
+            </div>
+            <div className="Order-heading container">
+              <div className="order-text row">
+                <div className="col-12">
+                  <h5> Order Details</h5>
                   <span>Order No : {order.orderNo}</span>
                   <br />
-                  <span>Order Total : {order.orderTotal}</span>
+                  <span> Order Total : {order.orderTotal} </span> <br />
+                  <span>Shipping Total : {order.shippingTotal} </span>
+                </div>
+              </div>
+              <hr />
+              <div className="product-info row">
+                <div className="col">
+                  <h5>Product Details</h5>
+                  <span>Product Name: {productLineItem.productName}</span>
                   <br />
-                  <span>Shipping Total : {order.shippingTotal}</span>
-                </Card.Text>
-              </Card.Body>
-            </Card>
-  
-            <Card className="mb-4">
-              <Card.Body>
-                <Card.Title>Product Details</Card.Title>
-                <Table striped bordered hover>
-                  <thead>
-                    <tr>
-                      <th>Product Name</th>
-                      <th>Product ID</th>
-                      <th>Quantity</th>
-                      <th>Price</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {productLineItems.map((item, index) => (
-                      <tr key={index}>
-                        <td>{item.productName}</td>
-                        <td>{item.productId}</td>
-                        <td>{item.quantity}</td>
-                        <td>{item.price}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </Card.Body>
-            </Card>
-  
-            <Row>
-              <Col>
-                <Card className="mb-4">
-                  <Card.Body>
-                    <Card.Title>Shipping Details</Card.Title>
-                    <Card.Text>
-                      <span>Full Name: {shipmentObj.fullName}</span>
-                      <br />
-                      <span>Address: {shipmentObj.address1}</span>
-                      <br />
-                      <span>Postal Code: {shipmentObj.postalCode}</span>
-                      <br />
-                      <span>City: {shipmentObj.city}</span>
-                      <br />
-                      <span>State Code: {shipmentObj.stateCode}</span>
-                      <br />
-                      <span>Country Code: {shipmentObj.countryCode}</span>
-                    </Card.Text>
-                  </Card.Body>
-                </Card>
-              </Col>
-              <Col>
-                <Card className="mb-4">
-                  <Card.Body>
-                    <Card.Title>Billing Details</Card.Title>
-                    <Card.Text>
-                      <span>Full Name: {billingObj.fullName}</span>
-                      <br />
-                      <span>Address: {billingObj.address1}</span>
-                      <br />
-                      <span>Postal Code: {billingObj.postalCode}</span>
-                      <br />
-                      <span>City: {billingObj.city}</span>
-                      <br />
-                      <span>State Code: {billingObj.stateCode}</span>
-                      <br />
-                      <span>Country Code: {billingObj.countryCode}</span>
-                    </Card.Text>
-                  </Card.Body>
-                </Card>
-              </Col>
-            </Row>
-          </Container>
+                  <span>Product ID: {productLineItem.productId} </span> <br />
+                  <span>Price: {productLineItem.price} </span>
+                  <br />
+                  <span>Quantity : {productLineItem.quantity} </span>
+                </div>
+              </div>
+              <hr />
+              <div className="row">
+                <div className="col">
+                  <h5>Shipping Details</h5>
+                  <span>Full Name: {shipmentObj.fullName}</span>
+                  <br />
+                  <span>Address: {shipmentObj.address1}</span>
+                  <br />
+                  <span>Postal Code: {shipmentObj.postalCode}</span>
+                  <br />
+                  <span>City: {shipmentObj.city}</span>
+                  <br />
+                  <span>State Code: {shipmentObj.stateCode}</span>
+                  <br />
+                  <span>Country Code: {shipmentObj.countryCode}</span>
+                </div>
+                <div className="col">
+                  <h5>Billing Details</h5>
+                  <span>Full Name: {billingObj.fullName}</span>
+                  <br />
+                  <span>Address: {billingObj.address1}</span>
+                  <br />
+                  <span>Postal Code: {billingObj.postalCode}</span>
+                  <br />
+                  <span>City: {billingObj.city}</span>
+                  <br />
+                  <span>State Code: {billingObj.stateCode}</span>
+                  <br />
+                  <span>Country Code: {billingObj.countryCode}</span>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
         <Footer />
       </div>
     );
   }
-    
 }
 
 export default OrderConfirmationPage;
