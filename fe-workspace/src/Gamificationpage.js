@@ -1,29 +1,27 @@
+import React, { useEffect, useRef, useState } from 'react';
 import * as cam from "@mediapipe/camera_utils";
 import * as mediapipePose from "@mediapipe/pose";
-import React, { useEffect, useRef, useState } from 'react';
 import { drawConnectors, drawLandmarks } from '@mediapipe/drawing_utils';
 import { Pose } from "@mediapipe/pose";
 import Navbar from './components/navbar';
 import Webcam from 'react-webcam';
 
 const UserPose = () => {
-    // refs to the html elements
     const webcamRef = useRef(null);
     const canvasRef = useRef(null);
     const squatCountRef = useRef(0);
     const [squatCount, setSquatCount] = useState(0);
     const [loading, setLoading] = useState(true);
-    const [countdown, setCountdown] = useState(5);
+    const [countdown, setCountdown] = useState(10);
     const [prevSquatState, setPrevSquatState] = useState(false);
-    let camera = null; // variable to initialize the camera
+    const [showMessage, setShowMessage] = useState(false);
+    let camera = null;
 
-    // function to draw the landmarks once the pose has been determined
     function onResults(results) {
         if (!results.poseLandmarks) {
             return;
         }
 
-        // Define the canvas elements
         canvasRef.current.width = webcamRef.current.video.videoWidth;
         canvasRef.current.height = webcamRef.current.video.videoHeight;
         const canvasElement = canvasRef.current;
@@ -35,7 +33,16 @@ const UserPose = () => {
         drawConnectors(canvasCtx, results.poseLandmarks, mediapipePose.POSE_CONNECTIONS, { color: '#00FF00', lineWidth: 4 });
         drawLandmarks(canvasCtx, results.poseLandmarks, { color: '#FF0000', lineWidth: 2 });
 
-        // Example squat detection logic
+        const requiredLandmarks = [23, 24, 25, 26, 27, 28];
+        const allLandmarksInView = requiredLandmarks.every(index => {
+            const landmark = results.poseLandmarks[index];
+            return landmark.x >= 0 && landmark.x <= 1 && landmark.y >= 0 && landmark.y <= 1;
+        });
+
+        if (!allLandmarksInView) {
+            return;
+        }
+
         const leftHip = results.poseLandmarks[23];
         const rightHip = results.poseLandmarks[24];
         const leftKnee = results.poseLandmarks[25];
@@ -48,17 +55,17 @@ const UserPose = () => {
                 Math.atan2(landmark3.y - landmark2.y, landmark3.x - landmark2.x) -
                 Math.atan2(landmark1.y - landmark2.y, landmark1.x - landmark2.x)
             ) * (180 / Math.PI);
-            return angle < 90; // Simple heuristic: check if the knee angle is less than 90 degrees
+            return angle < 90;
         };
 
         const squatState = isSquat(leftHip, leftKnee, leftAnkle) && isSquat(rightHip, rightKnee, rightAnkle);
 
         if (squatState && !prevSquatState) {
-            // Detect the transition from not squatting to squatting
             squatCountRef.current += 1;
             setSquatCount(squatCountRef.current);
             if (squatCountRef.current === 10) {
-                alert("Congratulations! You've completed 10 squats!");
+                setShowMessage(true);
+                camera.stop();
             }
         }
 
@@ -162,6 +169,24 @@ const UserPose = () => {
                     height: "auto",
                 }}
             />
+            {showMessage && (
+                <div style={{
+                    position: "absolute",
+                    top: "20%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    backgroundColor: "white",
+                    padding: "100px",
+                    borderRadius: "10px",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+                    textAlign: "center",
+                    zIndex: 11,
+                }}>
+                    <h2>Congratulations!</h2>
+                    <p>You have won 20% Off for your next order</p>
+                    <p>Coupon Code: <strong>rT5MrzqI6tSQLEku94gYg</strong></p>
+                </div>
+            )}
         </div>
     );
 };

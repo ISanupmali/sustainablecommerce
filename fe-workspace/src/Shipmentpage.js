@@ -172,12 +172,13 @@ class Shipmentpage extends React.Component {
 
   render() {
     const basketObj = this.state.basket;
+    const storeId = Cookies.get('storeId');
     const { errors } = this.state;
     if (this.state.submitted === false) {
       return (
         <div>
           <Helmet>
-            <title>Shipping page</title>
+            <title>{storeId ? ( " Billing Page" ) : ( " Shipping Page" )}</title>
             <meta name="theme-color" content="#ccc" />
           </Helmet>
           <Navbar></Navbar>
@@ -185,8 +186,8 @@ class Shipmentpage extends React.Component {
             <div className="row mt-3 mb-5 p-3 my-3 alert alert-success">
               <div className="col col-lg-9 col-sm-8">
                 <h5>
-                  <span className="fa fa-shopping-cart"></span> Shipping /
-                  Billing Info
+                  <span className="fa fa-shopping-cart"></span> 
+                  {storeId ? ( " Billing Info" ) : ( " Shipping Info" )}
                 </h5>
               </div>
               <div className="col col-lg-3 col-sm-4 text-end">
@@ -205,7 +206,7 @@ class Shipmentpage extends React.Component {
                 <form onSubmit={this.handleSubmission}>
                   <div className="form-group shipping">
                     <h5>
-                      <span className="fa fa-truck"></span> Shipping Address
+                      <span className="fa fa-truck"></span> {storeId ? ( " Billing Address" ) : ( " Shipping Address" )}
                     </h5>
                     <div className="row">
                       <div className="col-sm">
@@ -296,7 +297,7 @@ class Shipmentpage extends React.Component {
                       >
                       <option value="US">US</option>
                     </select>
-                    <label className="text-muted">Use same as shipping :</label>
+                    <label className="text-muted hide">Use same as shipping :</label>
                     <input
                       type="checkbox"
                       checked={this.state.useAsBilling}
@@ -402,7 +403,8 @@ class Shipmentpage extends React.Component {
                   </div>
                 </form>
               </div>
-              <div className="col-lg-4 col-sm">
+              {storeId && (
+              <div className="col-lg-4 col-sm bopisselected">
                 <div className="alert alert-success">
                   <div className="badge-warning mb-3">
                     <span className="fa fa-lg fa-earth"></span>{" "}
@@ -419,6 +421,7 @@ class Shipmentpage extends React.Component {
                   <CartTotal basket={basketObj} />
                 </div>
               </div>
+              )}
             </div>
           </div>
           <Footer />
@@ -428,7 +431,7 @@ class Shipmentpage extends React.Component {
       return (
         <div>
           <Helmet>
-            <title>Shipping page</title>
+            <title>{storeId ? ( "Billing Page" ) : ( "Shipping Page" )}</title>
             <meta name="theme-color" content="#ccc" />
           </Helmet>
           <Navbar></Navbar>

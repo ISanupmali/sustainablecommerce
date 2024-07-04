@@ -20,7 +20,7 @@ class App extends React.Component {
   async fetchCategoryData1(headers) {
     try {
       const res = await axios.get(
-        `${process.env.REACT_APP_API_URL}/category/dresses`,
+        `${process.env.REACT_APP_API_URL}/category/combined-grocery`,
         {
           headers: headers,
         }

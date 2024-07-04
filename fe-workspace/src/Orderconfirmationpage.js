@@ -166,7 +166,9 @@ class OrderConfirmationPage extends React.Component {
                   <span className="fa fa-truck"></span> Order Successfully Placed!
                 </Card.Title>
                 <Card.Text>
-                  <strong>Your Order is on the Way: </strong> You will receive an email shortly with the shipping details and a link for tracking the order.
+                  <div class="hide">
+                    <strong>Your Order is on the Way: </strong> You will receive an email shortly with the shipping details and a link for tracking the order.
+                  </div>
                 </Card.Text>
                 <blockquote className="blockquote">
                   Thank you for shopping on Sustainable Commerce, we appreciate it. Hope to see you again soon.
@@ -214,8 +216,8 @@ class OrderConfirmationPage extends React.Component {
             </Card>
   
             <Row>
-              <Col>
-                <Card className="mb-4">
+              <Col className = "hide">
+                <Card className="mb-4 hide">
                   <Card.Body>
                     <Card.Title>Shipping Details</Card.Title>
                     <Card.Text>
