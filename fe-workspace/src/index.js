@@ -19,6 +19,7 @@ import Paymentpage from "./Paymentpage";
 import OrderConfirmationPage from "./Orderconfirmationpage";
 import StorePortal from './StorePortal';
 import SpinWheel from './SpinWheel';
+import QRScanner from "./components/QRScanner";
 import RewardsPage from "./Rewardspage";
 import Gamificationpage from "./Gamificationpage";
 
@@ -38,6 +39,7 @@ const routing = (
       <Route path="/spinwheel" component={SpinWheel} />
       <Route path="/orderrewards" component={RewardsPage} />
       <Route path="/squatsgame" component={Gamificationpage} />
+      <Route path="/scanqr" component={QRScanner} />
     </div>
   </Router>
 );
