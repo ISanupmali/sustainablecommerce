@@ -114,22 +114,28 @@ class Categorypage extends React.Component {
   };
 
   render() {
+    const { id } = this.props.match.params;
+    const indexName = `${id}-index`; // Modify this to fit your naming convention
+
     return (
       <div>
         <Navbar />
         <section className="py-2 bg-light" style={{ minHeight: '600px' }}>
           <div className="container px-4 px-lg-5 mt-5">
             <h2 className="fw-bolder mb-4 cattitle text-capitalize">
-              {this.props.match.params.id.replace(/-/g, ' ')} Category
+              {id.replace(/-/g, ' ')} Category
             </h2>
             <Categorybanner />
             {this.state.isLoading ? (
               <Loading />
             ) : (
               <>
-                <p>Search powered by  <img class="iconimg" src="https://cdn.iconscout.com/icon/free/png-512/free-algolia-3521265-2944769.png" alt=""/> <span class="bluetext">Algolia </span> - Refine further by typing your search query below!</p>
+                <p className="alert alert-info">
+                  Search powered by <img className="iconimg" src="https://cdn.iconscout.com/icon/free/png-512/free-algolia-3521265-2944769.png" alt=""/> 
+                  <span className="bluetext">Algolia </span> - Refine further by typing your search query below!
+                </p>
                 <InstantSearch
-                  indexName="testcatalog"
+                  indexName={indexName}
                   searchClient={searchClient}
                   onSearchStateChange={this.handleSearchStateChange}
                 >

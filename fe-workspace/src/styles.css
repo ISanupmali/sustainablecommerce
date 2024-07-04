@@ -10989,3 +10989,10 @@ img.img-responsive.cartimg {
 .ais-Hits {
   width: 100%;
 }
+
+.hide {
+  display:none;
+}
+.smallfont {
+  font-size:12px;
+}

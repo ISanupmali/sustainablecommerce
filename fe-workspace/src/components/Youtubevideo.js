@@ -39,7 +39,7 @@ class Pdpinfo extends Component {
       return null;
     }
     return (
-      <div className="mt-5 text-center">
+      <div className="mt-5 text-center ytvideo">
         <h3 className="p-5">How BOPIS Works</h3>
         <iframe
           id="player"

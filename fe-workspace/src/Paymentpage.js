@@ -168,6 +168,7 @@ class Paymentpage extends React.Component {
   }
 
   render() {
+    const storeId = Cookies.get('storeId');
     if (this.state.submitted === false) {
       return (
         <div>
@@ -180,8 +181,7 @@ class Paymentpage extends React.Component {
             <div className="row mt-3 mb-5 p-3 my-3 alert alert-success">
               <div className="col col-lg-9 col-sm-8">
                 <h5>
-                  <span className="fa fa-shopping-cart"></span> Shipping /
-                  Billing Info
+                  <span className="fa fa-shopping-cart"></span> Payment Information
                 </h5>
               </div>
               <div className="col col-lg-3 col-sm-4">
@@ -347,22 +347,26 @@ class Paymentpage extends React.Component {
                 </form>
               </div>
               <div className="col-lg-4 col-sm">
-                <div className="badge badge-warning">
-                  <span className="fa fa-lg fa-exclamation-triangle"></span>{" "}
-                  IN-STORE PICKUP NOT AVAILABLE
+                {storeId && (
+                <div className="bopisselected">
+                  <div className="alert alert-success">
+                    <div className="badge-warning mb-3">
+                      <span className="fa fa-lg fa-earth"></span>{" "}
+                      BOPIS - BUY ONLINE PICKUP IN STORE
+                    </div>
+                    <div className="border border-secondary p-2 rounded">
+                      <p>
+                        Thank you for choosing pickup in store and contributing to our sustainable commerce movement.
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div className="border border-secondary p-2 rounded">
-                  <p>
-                    We regret to inform you that instore pickup is not available
-                    in your area. Enter your address to get your order at your
-                    doorstep.
-                  </p>
-                </div>
+                )}
+
                 <hr />
                 <div className="mb-2 p-1">
-                  <span className="fa fa-lg fa-credit-card">
-                    ACCEPTED PAYMENT METHODS
-                  </span>
+                  <span className="fa fa-lg fa-credit-card">                
+                  </span> <strong>ACCEPTED PAYMENT METHODS</strong>
                 </div>
                 <div className="border border-secondary p-2 rounded">
                   <span className="fa fa-cc-amex fa-lg font-weight-lighter"></span>{" "}

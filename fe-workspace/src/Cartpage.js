@@ -39,7 +39,6 @@ class Cartpage extends React.Component {
     var params = {
       zip: this.state.zipCode,
     };
-    console.log("Inside Store");
     this.setState({ submitted: true });
     axios.get(`${process.env.REACT_APP_API_URL}/store`, {
       params: params,
@@ -74,7 +73,6 @@ class Cartpage extends React.Component {
   };
 
   handleAddStore = (event) => {
-    console.log("Values1", Cookies.get('storeId'));
     const storeId = event.currentTarget.getAttribute("value1");
     const storeName = event.currentTarget.getAttribute("value2");
     const storeAddress = event.currentTarget.getAttribute("value3");
