@@ -22,6 +22,7 @@ import SpinWheel from './SpinWheel';
 import QRScanner from "./components/QRScanner";
 import RewardsPage from "./Rewardspage";
 import Gamificationpage from "./Gamificationpage";
+import SustainibilityPage from "./SustainibilityPage";
 
 const routing = (
   <Router>
@@ -40,6 +41,7 @@ const routing = (
       <Route path="/orderrewards" component={RewardsPage} />
       <Route path="/squatsgame" component={Gamificationpage} />
       <Route path="/scanqr" component={QRScanner} />
+      <Route path="/sustainibility-via-bopis" component={SustainibilityPage} />
     </div>
   </Router>
 );

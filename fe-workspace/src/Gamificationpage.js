@@ -5,6 +5,7 @@ import { drawConnectors, drawLandmarks } from '@mediapipe/drawing_utils';
 import { Pose } from "@mediapipe/pose";
 import Navbar from './components/navbar';
 import Webcam from 'react-webcam';
+import { useHistory } from 'react-router-dom';
 
 const UserPose = () => {
     const webcamRef = useRef(null);
@@ -16,6 +17,7 @@ const UserPose = () => {
     const [prevSquatState, setPrevSquatState] = useState(false);
     const [showMessage, setShowMessage] = useState(false);
     let camera = null;
+    const history = useHistory();
 
     function onResults(results) {
         if (!results.poseLandmarks) {
@@ -117,6 +119,11 @@ const UserPose = () => {
         }
     }, [loading]);
 
+    // Function to handle back button click
+    const handleBack = () => {
+        history.goBack(); // Go back to the previous page
+    };
+
     return (
         <div>
             {loading && (
@@ -182,13 +189,57 @@ const UserPose = () => {
                     textAlign: "center",
                     zIndex: 11,
                 }}>
+                    
                     <h2>Congratulations!</h2>
                     <p>You have won 20% Off for your next order</p>
                     <p>Coupon Code: <strong>rT5MrzqI6tSQLEku94gYg</strong></p>
+                    <button style={styles.backButton} onClick={handleBack}>Go Back</button>
                 </div>
             )}
         </div>
     );
 };
+
+// Styles for different UI elements
+const styles = {
+    container: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '100vh',
+      backgroundColor: '#f0f0f0',
+      padding: '20px'
+    },
+    button: {
+      marginTop: '20px',
+      padding: '10px 20px',
+      fontSize: '16px',
+      fontWeight: 'bold',
+      color: '#ffffff',
+      backgroundColor: '#007bff',
+      border: 'none',
+      borderRadius: '5px',
+      cursor: 'pointer'
+    },
+    backButton: {
+      marginTop: '20px',
+      marginBottom: '5px',
+      padding: '10px 20px',
+      fontSize: '16px',
+      fontWeight: 'bold',
+      color: '#ffffff',
+      backgroundColor: '#6c757d',
+      border: 'none',
+      borderRadius: '5px',
+      cursor: 'pointer'
+    },
+    result: {
+      marginTop: '20px',
+      fontSize: '18px',
+      fontWeight: 'bold',
+      color: '#333'
+    }
+  };
 
 export default UserPose;
