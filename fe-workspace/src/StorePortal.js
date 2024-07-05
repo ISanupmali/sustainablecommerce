@@ -27,11 +27,6 @@ class StorePortal extends React.Component {
         alert('Congrats you are a lucky customer !!');
     };
 
-    handleSquart = (event) => {
-        event.preventDefault();
-        alert('Better Luck Next Time !!');
-    };
-
     handleQrScan = (event) => {
         event.preventDefault();
         alert('Better Luck Next Time !!');
@@ -135,7 +130,7 @@ class StorePortal extends React.Component {
                             <hr className="my-4" />
                             
                             <div className="row">
-                                <div className="col-6 mx-auto">
+                                <div className="col-lg-6 col-md-12 col-sm-12 mx-auto">
                                     <Card>
                                         <Card.Header>Please enter the order number and the associated zip code to fetch the details of the order</Card.Header>
                                         <Card.Body>
